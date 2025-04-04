@@ -5,9 +5,10 @@ import { generateToken } from "../utils/generateToken.mjs";
 export const login = async(req,res,next) => {
 
     try {
-        const result = await loginUser(req.body);
+        const { user } = await loginUser(req.body);
+console.log(user)
+        const token = generateToken(user);
 
-        const token = generateToken(result);
         res.cookie("token", token, {
             httpOnly: true,
             secure: false, 
@@ -15,7 +16,7 @@ export const login = async(req,res,next) => {
             maxAge: 24 * 60 * 60 * 1000
           });
 
-        res.status(200).json(successResponse("User login successfully", result))
+        res.status(200).json(successResponse("User login successfully", user))
     } catch (error) {
         next(error);
     }

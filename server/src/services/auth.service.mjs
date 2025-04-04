@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.mjs";
-import UserProfile from "../models/userProfile.model.mjs";
 import { ErrorResponse } from "../utils/ErrorResponse.mjs";
+import { saveUserWithProfile } from "../repositories/auth.repository.mjs";
 
 export const loginUser = async(loginUser) => {
     const errors = {};
@@ -18,7 +18,7 @@ export const loginUser = async(loginUser) => {
         throw new ErrorResponse("User login failed", 401, errors);
     }
     
-    return { user: { id: user._id, name: user.name, email: user.email } };
+    return { user: { id: user._id.toString(), name: user.name, email: user.email, role: user.role} };
 }
 export const registerUser = async (registerUser) => {
 
@@ -36,27 +36,20 @@ export const registerUser = async (registerUser) => {
 
     const hashedPassword = await bcrypt.hash(registerUser.password, 10);
 
-    const user = new User();
-        user.firstName = registerUser.firstName;
-        user.lastName = registerUser.lastName;
-        user.name = `${registerUser.firstName} ${registerUser.lastName}`;
-        user.contactNumber = registerUser.contactNumber;
-        user.status = registerUser.status;
-        user.email = registerUser.email;
-        user.password = hashedPassword;
-        user.country = registerUser.country;
-        user.role = registerUser.role;
-    const savedUser = await user.save();
+    const registerUserData = {
+        firstName: registerUser.firstName,
+        lastName: registerUser.lastName,
+        name: `${registerUser.firstName} ${registerUser.lastName}`,
+        contactNumber: registerUser.contactNumber,
+        status: registerUser.status,
+        email: registerUser.email,
+        password: hashedPassword,
+        country: registerUser.country,
+        role: registerUser.role,
+      };
+    
+    const savedUser = await saveUserWithProfile(registerUserData, registerUser.profile);
 
-    if (!savedUser) throw new ErrorResponse('User registration failed');
-
-    const userProfile = new UserProfile();
-        userProfile.user = savedUser._id;
-        userProfile.profileImageUrl = registerUser.profile || 'user.png';
-    const savedUserProfile = await userProfile.save();
-
-    if(!savedUserProfile) throw new ErrorResponse('User profile created failed');
-  
     return { user: { id: savedUser._id, name: savedUser.name, email: savedUser.email } };
   
 }
