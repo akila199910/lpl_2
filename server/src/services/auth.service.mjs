@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model.mjs";
 import UserProfile from "../models/userProfile.model.mjs";
 import { ErrorResponse } from "../utils/ErrorResponse.mjs";
-import { generateToken } from "../utils/generateToken.mjs";
 
 export const loginUser = async(loginUser) => {
     const errors = {};
@@ -15,14 +14,11 @@ export const loginUser = async(loginUser) => {
         if(!isMatch) errors.password = "Password is incorrect";
     }
     
-
     if (Object.keys(errors).length > 0) {
         throw new ErrorResponse("User login failed", 401, errors);
     }
-
-    const token = generateToken(user);
     
-    return { user: { id: user._id, name: user.name, email: user.email }, token };
+    return { user: { id: user._id, name: user.name, email: user.email } };
 }
 export const registerUser = async (registerUser) => {
 
