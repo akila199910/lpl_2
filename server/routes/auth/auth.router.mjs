@@ -1,15 +1,15 @@
 import { Router } from "express";
 import { validationResult } from "express-validator";
-import { register } from "../../src/controllers/auth.controller.mjs";
+import { login, register } from "../../src/controllers/auth.controller.mjs";
 import { ErrorResponse } from "../../src/utils/ErrorResponse.mjs";
-import { registerValidation } from "../../validations/auth/auth.validation.mjs";
+import { loginValidation, registerValidation } from "../../validations/auth/auth.validation.mjs";
 
 const authRouter = Router();
 
 const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
 
+    if (!errors.isEmpty()) {
         const errorObject = {};
         errors.array().forEach(err => {
             if (!errorObject[err.path]) {
@@ -21,6 +21,21 @@ const handleValidationErrors = (req, res, next) => {
     next();
 };
 
+const handleLoginValidationErrors = (req,res,next)=>{
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+        const errorObject = {};
+        errors.array().forEach(err => {
+            if(!errorObject[err.path]){
+                errorObject[err.path] = err.msg
+            }
+        })
+        return next(new ErrorResponse("User login validation failed", 400, errorObject));
+    }
+    next()
+}
+
 authRouter.post("/register", registerValidation ,handleValidationErrors,register)
-authRouter.post("/login", loginValidation,handleLoginValidationErrors,login)
+authRouter.post("/login", loginValidation,handleLoginValidationErrors, login)
 export default authRouter;

@@ -2,6 +2,28 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model.mjs";
 import UserProfile from "../models/userProfile.model.mjs";
 import { ErrorResponse } from "../utils/ErrorResponse.mjs";
+import { generateToken } from "../utils/generateToken.mjs";
+
+export const loginUser = async(loginUser) => {
+    const errors = {};
+
+    const user = await User.findOne({ email:loginUser.email });
+    if(!user) errors.email = "Email is not found our system";
+
+    if(user){
+        const isMatch = await bcrypt.compare(loginUser.password, user.password);
+        if(!isMatch) errors.password = "Password is incorrect";
+    }
+    
+
+    if (Object.keys(errors).length > 0) {
+        throw new ErrorResponse("User login failed", 401, errors);
+    }
+
+    const token = generateToken(user);
+    
+    return { user: { id: user._id, name: user.name, email: user.email }, token };
+}
 export const registerUser = async (registerUser) => {
 
     const errors = {};
@@ -13,7 +35,7 @@ export const registerUser = async (registerUser) => {
     if (isContactExit) errors.contactNumber = "Contact number already exists";
 
     if (Object.keys(errors).length > 0) {
-        throw new ErrorResponse("User register validation failed", 400, errors);
+        throw new ErrorResponse("User register failed", 400, errors);
     }
 
     const hashedPassword = await bcrypt.hash(registerUser.password, 10);
