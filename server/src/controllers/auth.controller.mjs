@@ -12,7 +12,7 @@ console.log(user)
         res.cookie("token", token, {
             httpOnly: true,
             secure: false, 
-            sameSite: "lax",
+            sameSite: "strict",
             maxAge: 24 * 60 * 60 * 1000
           });
 
