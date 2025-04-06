@@ -41,3 +41,17 @@ export const verifyUserAccount = async(userId)=>{
 
   return updatedUser._id.toString();
 }
+
+export const saveRestOtp = async (userId, resetOtp, resetOtpExpireAt) => {
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    {
+      resetOtp: resetOtp,
+      resetOtpExpireAt: resetOtpExpireAt,
+    },
+    { new: true } 
+  );
+
+  return updatedUser._id.toString();
+};

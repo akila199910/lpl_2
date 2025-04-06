@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validationResult } from "express-validator";
-import { login, register, sendVerifyOtp, verifyAccount } from "../../src/controllers/auth.controller.mjs";
+import { isUserAuthenticated, login, register, sendPasswordResetOtp, sendVerifyOtp, verifyAccount } from "../../src/controllers/auth.controller.mjs";
 import { ErrorResponse } from "../../src/utils/ErrorResponse.mjs";
 import { loginValidation, registerValidation, accountVerifyValidation } from "../../validations/auth/auth.validation.mjs";
 import { authMiddleware } from "../../middlewares/authMiddleware.mjs";
@@ -55,5 +55,7 @@ authRouter.post("/register", registerValidation ,handleValidationErrors,register
 authRouter.post("/login", loginValidation,handleLoginValidationErrors, login)
 authRouter.post("/send-verify-otp", authMiddleware, sendVerifyOtp);
 authRouter.post("/verify-account", authMiddleware, accountVerifyValidation, handleAccountVerifyErrors, verifyAccount);
+authRouter.get("/is-authenticated", authMiddleware, isUserAuthenticated);
+authRouter.post("/send-password-reset-otp", authMiddleware, sendPasswordResetOtp);
 
 export default authRouter;

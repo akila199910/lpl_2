@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.mjs";
 import { ErrorResponse } from "../utils/ErrorResponse.mjs";
-import { saveOtp, saveUserWithProfile, verifyUserAccount } from "../repositories/auth.repository.mjs";
+import { saveOtp, saveRestOtp, saveUserWithProfile, verifyUserAccount } from "../repositories/auth.repository.mjs";
 import transport from "../configs/nodemailer.mjs";
 
 export const loginUser = async(loginUser) => {
@@ -120,4 +120,32 @@ export const verifyEmail = async(verifyData) => {
 
       return { id: userId };
 }
+
+export const sendUserPasswordResetOtp = async (passwordResetData) => {
+
+    const errors = {};
+    const user = await User.findOne({ email: passwordResetData.email });
+
+    if(!user)
+         errors.user = "User not found";
+
+    if (Object.keys(errors).length > 0) {
+        throw new ErrorResponse("User password reset code send failed", 404, errors);
+      }
+
+    const resetOtp = String(Math.floor(100000 + Math.random() * 900000));
+    const resetOtpExpireAt = Date.now() + 5 * 60 * 1000;
+
+    const savedUser = await saveRestOtp(user._id.toString(), resetOtp, resetOtpExpireAt);
   
+    const mailOptions = {
+      from: process.env.MAIL_FROM_ADDRESS,
+      to: user.email,
+      subject: "Password Reset",
+      text: `Hello ${user.name}, your password reset code is ${resetOtp}`,
+    };
+  
+    await transport.sendMail(mailOptions);
+  
+    return { id: savedUser };
+}

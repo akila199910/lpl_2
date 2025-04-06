@@ -1,12 +1,13 @@
-import { loginUser, registerUser, sendUserVerifyOtp, verifyEmail } from "../services/auth.service.mjs";
+import { loginUser, registerUser, sendUserPasswordResetOtp, sendUserVerifyOtp, verifyEmail } from "../services/auth.service.mjs";
 import { successResponse } from "../utils/apiResponse.mjs";
 import { generateToken } from "../utils/generateToken.mjs";
 
+
+// user log in function
 export const login = async(req,res,next) => {
 
     try {
         const { user } = await loginUser(req.body);
-console.log(user)
         const token = generateToken(user);
 
         res.cookie("token", token, {
@@ -21,6 +22,8 @@ console.log(user)
         next(error);
     }
 };
+
+// user register function
 export const register = async (req, res, next) => {
 
     try {
@@ -31,6 +34,7 @@ export const register = async (req, res, next) => {
     }
 };
 
+//user logout function
 export const logout = (req, res, next) => {
     try {
       res.clearCookie("token");
@@ -40,6 +44,7 @@ export const logout = (req, res, next) => {
     }
   };
 
+  // send verify otp to user, to verify registered account
 export const sendVerifyOtp = async(req, res, next) => {
     try {
       const result = await sendUserVerifyOtp(req.body);
@@ -49,6 +54,8 @@ export const sendVerifyOtp = async(req, res, next) => {
     }
   };
 
+
+// verify user account using otp
 export const verifyAccount = async(req, res, next) => {
   try {
     const result = await verifyEmail(req.body);
@@ -57,4 +64,23 @@ export const verifyAccount = async(req, res, next) => {
     next(error);
   }
 }
+
+// check user authentication 
+export const isUserAuthenticated = (req, res, next) => {
+    try {
+      res.status(200).json(successResponse("User is authenticated", req.user));
+    } catch (error) {
+      next(error);
+    }
+  };
   
+  // send password reset otp
+
+export const sendPasswordResetOtp = async(req, res, next) => {
+    try {
+      const result = await sendUserPasswordResetOtp(req.body);
+      res.status(200).json(successResponse("Password reset OTP sent successfully",result));
+    } catch (error) {
+      next(error);
+    }
+}
