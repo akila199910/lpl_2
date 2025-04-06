@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validationResult } from "express-validator";
-import { login, register } from "../../src/controllers/auth.controller.mjs";
+import { login, register, sendVerifyOtp } from "../../src/controllers/auth.controller.mjs";
 import { ErrorResponse } from "../../src/utils/ErrorResponse.mjs";
 import { loginValidation, registerValidation } from "../../validations/auth/auth.validation.mjs";
 
@@ -38,4 +38,5 @@ const handleLoginValidationErrors = (req,res,next)=>{
 
 authRouter.post("/register", registerValidation ,handleValidationErrors,register)
 authRouter.post("/login", loginValidation,handleLoginValidationErrors, login)
+authRouter.post("/send-verify-otp", sendVerifyOtp);
 export default authRouter;

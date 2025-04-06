@@ -1,4 +1,4 @@
-import { loginUser, registerUser } from "../services/auth.service.mjs";
+import { loginUser, registerUser, sendUserVerifyOtp } from "../services/auth.service.mjs";
 import { successResponse } from "../utils/apiResponse.mjs";
 import { generateToken } from "../utils/generateToken.mjs";
 
@@ -30,4 +30,22 @@ export const register = async (req, res, next) => {
       next(error);
     }
 };
+
+export const logout = (req, res, next) => {
+    try {
+      res.clearCookie("token");
+      res.status(200).json(successResponse("User logout successfully"));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+export const sendVerifyOtp = async(req, res, next) => {
+    try {
+      const result = await sendUserVerifyOtp(req.body);
+      res.status(200).json(successResponse("OTP sent successfully",result));
+    } catch (error) {
+      next(error);
+    }
+  };
   

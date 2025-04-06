@@ -13,3 +13,18 @@ export const saveUserWithProfile = async (userData, profileImage = "user.png") =
 
   return savedUser;
 };
+export const saveOtp = async (userId, otp, otpExpireAt) => {
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    {
+      verifyOtp: otp,
+      verifyOtpExpireAt: otpExpireAt,
+    },
+    { new: true } 
+  );
+
+  if (!updatedUser) throw new ErrorResponse("User not found", 404);
+
+  return updatedUser._id.toString();
+};

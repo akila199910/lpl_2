@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.mjs";
 import { ErrorResponse } from "../utils/ErrorResponse.mjs";
-import { saveUserWithProfile } from "../repositories/auth.repository.mjs";
+import { saveOtp, saveUserWithProfile } from "../repositories/auth.repository.mjs";
+import transport from "../configs/nodemailer.mjs";
 
 export const loginUser = async(loginUser) => {
     const errors = {};
@@ -50,6 +51,47 @@ export const registerUser = async (registerUser) => {
     
     const savedUser = await saveUserWithProfile(registerUserData, registerUser.profile);
 
+    // send the welcome email to register user
+
+    const mailOptions = {
+        from: process.env.MAIL_FROM_ADDRESS,
+        to: savedUser.email,
+        subject: "Welcome to LPL",
+        text: `Hello ${savedUser.name}, welcome to lanka premier league. We are excited to have you join us!`,
+    };
+
+    await transport.sendMail(mailOptions);
+
     return { user: { id: savedUser._id, name: savedUser.name, email: savedUser.email } };
-  
 }
+
+export const logoutUser = async () => {}
+
+export const sendUserVerifyOtp = async ({ id: userId }) => {
+    const errors = {};
+  
+    const user = await User.findById(userId);
+  
+    if (!user) errors.user = "User not found";
+    if (user?.isAccountVerified) errors.isAccountVerified = "Account is already verified";
+  
+    if (Object.keys(errors).length > 0) {
+      throw new ErrorResponse("User account verification failed", 404, errors);
+    }
+  
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    const otpExpireAt = Date.now() + 5 * 60 * 1000;
+    const userId = await saveOtp(user._id.toString(), otp, otpExpireAt);
+  
+    const mailOptions = {
+      from: process.env.MAIL_FROM_ADDRESS,
+      to: user.email,
+      subject: "Account Verification",
+      text: `Hello ${user.name}, your account verification code is ${otp}`,
+    };
+  
+    await transport.sendMail(mailOptions);
+  
+    return { id: userId };
+  };
+  
