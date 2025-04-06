@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.mjs";
 import { ErrorResponse } from "../utils/ErrorResponse.mjs";
-import { saveOtp, saveUserWithProfile } from "../repositories/auth.repository.mjs";
+import { saveOtp, saveUserWithProfile, verifyUserAccount } from "../repositories/auth.repository.mjs";
 import transport from "../configs/nodemailer.mjs";
 
 export const loginUser = async(loginUser) => {
@@ -67,21 +67,21 @@ export const registerUser = async (registerUser) => {
 
 export const logoutUser = async () => {}
 
-export const sendUserVerifyOtp = async ({ id: userId }) => {
+export const sendUserVerifyOtp = async (registerUser) => {
     const errors = {};
   
-    const user = await User.findById(userId);
+    const user = await User.findById(registerUser.id);
   
     if (!user) errors.user = "User not found";
     if (user?.isAccountVerified) errors.isAccountVerified = "Account is already verified";
   
     if (Object.keys(errors).length > 0) {
-      throw new ErrorResponse("User account verification failed", 404, errors);
+      throw new ErrorResponse("User account verification code send failed", 404, errors);
     }
   
     const otp = String(Math.floor(100000 + Math.random() * 900000));
     const otpExpireAt = Date.now() + 5 * 60 * 1000;
-    const userId = await saveOtp(user._id.toString(), otp, otpExpireAt);
+    const savedUser = await saveOtp(user._id.toString(), otp, otpExpireAt);
   
     const mailOptions = {
       from: process.env.MAIL_FROM_ADDRESS,
@@ -92,6 +92,32 @@ export const sendUserVerifyOtp = async ({ id: userId }) => {
   
     await transport.sendMail(mailOptions);
   
-    return { id: userId };
-  };
+    return { id: savedUser };
+};
+
+export const verifyEmail = async(verifyData) => {
+ console.log(verifyData)
+    const errors = {};
+    const user = await User.findById(verifyData.id);
+
+    if(!user)
+         errors.user = "User not found";
+
+    if(user?.isAccountVerified)
+         errors.isAccountVerified = "Account is already verified";
+
+    if(user?.verifyOtp === ""||user?.verifyOtp !== verifyData.otp)
+         errors.otp = "OTP is incorrect";
+
+    if(user?.verifyOtpExpireAt < Date.now())
+         errors.verifyOtpExpireAt = "OTP is expired";
+
+    if (Object.keys(errors).length > 0) {
+        throw new ErrorResponse("User account verification failed", 404, errors);
+      }
+
+      const userId = await verifyUserAccount(user._id.toString());
+
+      return { id: userId };
+}
   

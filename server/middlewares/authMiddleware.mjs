@@ -1,12 +1,26 @@
 import jwt from "jsonwebtoken";
+import { errorResponse } from "../src/utils/apiResponse.mjs";
 
-export const authMiddleware = (req, res, next) => {	
-    try {
-        const token = req.headers.authorization.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (error) {
-        res.status(401).json({ success: false, message: "Unauthorized Access" });
+export const authMiddleware = (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json(errorResponse("No token provided"));
     }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.body.id = decoded.id;
+
+    req.user = {
+      email: decoded.email,
+      role: decoded.role
+    };
+
+    next();
+  } catch (error) {
+    res.status(401).json(errorResponse("Invalid or expired token"));
+  }
 };

@@ -24,7 +24,20 @@ export const saveOtp = async (userId, otp, otpExpireAt) => {
     { new: true } 
   );
 
-  if (!updatedUser) throw new ErrorResponse("User not found", 404);
-
   return updatedUser._id.toString();
 };
+
+export const verifyUserAccount = async(userId)=>{
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    {
+      isAccountVerified: true,
+      verifyOtp: '',
+      verifyOtpExpireAt: 0,
+    },
+    { new: true } 
+  );
+
+  return updatedUser._id.toString();
+}

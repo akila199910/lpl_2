@@ -1,4 +1,4 @@
-import { loginUser, registerUser, sendUserVerifyOtp } from "../services/auth.service.mjs";
+import { loginUser, registerUser, sendUserVerifyOtp, verifyEmail } from "../services/auth.service.mjs";
 import { successResponse } from "../utils/apiResponse.mjs";
 import { generateToken } from "../utils/generateToken.mjs";
 
@@ -48,4 +48,13 @@ export const sendVerifyOtp = async(req, res, next) => {
       next(error);
     }
   };
+
+export const verifyAccount = async(req, res, next) => {
+  try {
+    const result = await verifyEmail(req.body);
+    res.status(200).json(successResponse("Account verify successfully",result));
+  } catch (error) {
+    next(error);
+  }
+}
   
