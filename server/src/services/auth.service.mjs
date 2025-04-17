@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.mjs";
 import { ErrorResponse } from "../utils/ErrorResponse.mjs";
-import { saveOtp, saveRestOtp, saveUserWithProfile, verifyUserAccount } from "../repositories/auth.repository.mjs";
+import { saveOtp, saveResetOtp, saveUserWithProfile, updatePassword, verifyUserAccount } from "../repositories/auth.repository.mjs";
 import transport from "../configs/nodemailer.mjs";
 
 export const loginUser = async(loginUser) => {
@@ -136,7 +136,7 @@ export const sendUserPasswordResetOtp = async (passwordResetData) => {
     const resetOtp = String(Math.floor(100000 + Math.random() * 900000));
     const resetOtpExpireAt = Date.now() + 5 * 60 * 1000;
 
-    const savedUser = await saveRestOtp(user._id.toString(), resetOtp, resetOtpExpireAt);
+    const savedUser = await saveResetOtp(user._id.toString(), resetOtp, resetOtpExpireAt);
   
     const mailOptions = {
       from: process.env.MAIL_FROM_ADDRESS,
@@ -148,4 +148,29 @@ export const sendUserPasswordResetOtp = async (passwordResetData) => {
     await transport.sendMail(mailOptions);
   
     return { id: savedUser };
+}
+
+export const resetUserPassword = async (passwordResetData) => {
+
+  const errors = {};
+  const user = await User.findOne({ email: passwordResetData.email });
+
+  if(!user)
+       errors.user = "User not found";
+
+  if(user?.resetOtp === "" || user?.resetOtp !== passwordResetData.otp)
+    errors.otp = "OTP is incorrect";
+
+  if(user?.resetOtpExpireAt < Date.now())
+    errors.resetOtpExpireAt = "OTP is expired";
+
+  if (Object.keys(errors).length > 0) {
+      throw new ErrorResponse("User password reset failed", 404, errors);
+    }
+
+  const hashedPassword = await bcrypt.hash(passwordResetData.password, 10);
+
+  const savedUser = await updatePassword(user._id.toString(), hashedPassword);
+
+  return { id: savedUser };
 }

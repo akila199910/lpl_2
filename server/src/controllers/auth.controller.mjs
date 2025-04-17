@@ -1,4 +1,4 @@
-import { loginUser, registerUser, sendUserPasswordResetOtp, sendUserVerifyOtp, verifyEmail } from "../services/auth.service.mjs";
+import { loginUser, registerUser, resetUserPassword, sendUserPasswordResetOtp, sendUserVerifyOtp, verifyEmail } from "../services/auth.service.mjs";
 import { successResponse } from "../utils/apiResponse.mjs";
 import { generateToken } from "../utils/generateToken.mjs";
 
@@ -74,8 +74,7 @@ export const isUserAuthenticated = (req, res, next) => {
     }
   };
   
-  // send password reset otp
-
+// send password reset otp
 export const sendPasswordResetOtp = async(req, res, next) => {
     try {
       const result = await sendUserPasswordResetOtp(req.body);
@@ -83,4 +82,14 @@ export const sendPasswordResetOtp = async(req, res, next) => {
     } catch (error) {
       next(error);
     }
+}
+
+//password reset 
+export const passwordReset = async(req, res, next) => {
+  try {
+    const result = await resetUserPassword(req.body);
+    res.status(200).json(successResponse("Password reset successfully",result));
+  } catch (error) {
+    next(error);
+  }
 }

@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { validationResult } from "express-validator";
-import { isUserAuthenticated, login, register, sendPasswordResetOtp, sendVerifyOtp, verifyAccount } from "../../src/controllers/auth.controller.mjs";
+import { isUserAuthenticated, login, passwordReset, register, sendPasswordResetOtp, sendVerifyOtp, verifyAccount } from "../../src/controllers/auth.controller.mjs";
 import { ErrorResponse } from "../../src/utils/ErrorResponse.mjs";
-import { loginValidation, registerValidation, accountVerifyValidation } from "../../validations/auth/auth.validation.mjs";
+import { loginValidation, registerValidation, accountVerifyValidation, passwordResetValidation, passwordResetOtpValidation } from "../../validations/auth/auth.validation.mjs";
 import { authMiddleware } from "../../middlewares/authMiddleware.mjs";
 
 const authRouter = Router();
@@ -50,12 +50,42 @@ const handleAccountVerifyErrors = (req,res,next)=>{
     }
     next()
 }
+const handlePasswordResetOtpErrors = (req,res,next)=>{
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+        const errorObject = {};
+        errors.array().forEach(err => {
+            if(!errorObject[err.path]){
+                errorObject[err.path] = err.msg
+            }
+        })
+        return next(new ErrorResponse("Password reset otp validation failed", 401, errorObject));
+    }
+    next()
+}
+const handlePasswordResetErrors = (req,res,next)=>{
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+        const errorObject = {};
+        errors.array().forEach(err => {
+            if(!errorObject[err.path]){
+                errorObject[err.path] = err.msg
+            }
+        })
+        return next(new ErrorResponse("Password reset validation failed", 401, errorObject));
+    }
+    next()
+}
 
 authRouter.post("/register", registerValidation ,handleValidationErrors,register)
 authRouter.post("/login", loginValidation,handleLoginValidationErrors, login)
 authRouter.post("/send-verify-otp", authMiddleware, sendVerifyOtp);
 authRouter.post("/verify-account", authMiddleware, accountVerifyValidation, handleAccountVerifyErrors, verifyAccount);
 authRouter.get("/is-authenticated", authMiddleware, isUserAuthenticated);
-authRouter.post("/send-password-reset-otp", authMiddleware, sendPasswordResetOtp);
+authRouter.post("/send-password-reset-otp", passwordResetOtpValidation,handlePasswordResetOtpErrors, sendPasswordResetOtp);
+authRouter.post("/password-reset", passwordResetValidation, handlePasswordResetErrors, passwordReset);
+
 
 export default authRouter;

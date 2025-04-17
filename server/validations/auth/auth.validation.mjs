@@ -35,3 +35,27 @@ export const loginValidation = [
 export const accountVerifyValidation = [
   body('otp').notEmpty().withMessage('OTP is required'),
 ];
+
+export const passwordResetOtpValidation = [
+  body('email')
+    .notEmpty().withMessage('Email is required')
+    .isEmail().withMessage('Email must be a valid email address'),
+];
+
+export const passwordResetValidation = [
+  body('otp').notEmpty().withMessage('OTP is required'),
+  body('email')
+    .notEmpty().withMessage('Email is required')
+    .isEmail().withMessage('Email must be a valid email address'),
+  body('password')
+    .notEmpty().withMessage('Password is required')
+    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
+  body('confirmPassword')
+    .notEmpty().withMessage('Confirm password is required')
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('Passwords do not match');
+      }
+      return true;
+    }),
+];

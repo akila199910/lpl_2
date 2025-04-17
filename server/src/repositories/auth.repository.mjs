@@ -42,7 +42,7 @@ export const verifyUserAccount = async(userId)=>{
   return updatedUser._id.toString();
 }
 
-export const saveRestOtp = async (userId, resetOtp, resetOtpExpireAt) => {
+export const saveResetOtp = async (userId, resetOtp, resetOtpExpireAt) => {
 
   const updatedUser = await User.findByIdAndUpdate(
     userId,
@@ -55,3 +55,18 @@ export const saveRestOtp = async (userId, resetOtp, resetOtpExpireAt) => {
 
   return updatedUser._id.toString();
 };
+
+export const updatePassword = async (userId, hashedPassword) => {
+
+  const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        password: hashedPassword,
+        resetOtp: '',
+        resetOtpExpireAt: 0,
+      },
+      { new: true } 
+    );
+
+  return updatedUser._id.toString();
+}
