@@ -9,9 +9,12 @@ import authRouter from "./routes/auth/auth.router.mjs";
 
 dotenv.config();
 const server = express();
+server.use(cors({
+    origin: "http://localhost:5173", // ✅ allow frontend dev server
+    credentials: true,               // ✅ allow cookies / auth headers
+  }));
 server.use(cookieParser());
 server.use(express.json());
-server.use(cors({credentials: true}));
 server.use("/auth", authRouter);
 server.use(errorHandlerMiddleware);
 

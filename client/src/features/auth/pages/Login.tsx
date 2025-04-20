@@ -5,6 +5,7 @@ import { RiLockPasswordFill } from "react-icons/ri";
 import { FaUser } from "react-icons/fa";
 import { FaPhoneSquare } from "react-icons/fa";
 import Select, { SingleValue } from "react-select";
+import apiClient from "../../../api/api-client";
 
 type CountryOption = {
   value: string;
@@ -18,29 +19,30 @@ type registerData = {
   contactNumber : string | '';
   password: string | '';
   confirmPassword: string | '';
-  phone: string | '';
   country: string | '';
   role: string | '';
+  status: number
 }
 
 const cricketCountries: CountryOption[] = [
-  { value: "in", label: "India" },
-  { value: "pk", label: "Pakistan" },
-  { value: "lk", label: "Sri Lanka" },
-  { value: "bd", label: "Bangladesh" },
-  { value: "af", label: "Afghanistan" },
-  { value: "au", label: "Australia" },
-  { value: "nz", label: "New Zealand" },
-  { value: "za", label: "South Africa" },
-  { value: "gb", label: "England" },
-  { value: "ie", label: "Ireland" },
-  { value: "zm", label: "Zimbabwe" },
-  { value: "us", label: "USA" },
-  { value: "ca", label: "Canada" },
-  { value: "ae", label: "UAE" },
-  { value: "nl", label: "Netherlands" },
-  { value: "om", label: "Oman" },
-  { value: "np", label: "Nepal" },
+
+  { value: "Sri Lanka", label: "Sri Lanka" },
+  { value: "India", label: "India" },
+  { value: "Pakistan", label: "Pakistan" },
+  { value: "Bangladesh", label: "Bangladesh" },
+  { value: "Afghanistan", label: "Afghanistan" },
+  { value: "Australia", label: "Australia" },
+  { value: "New Zealand", label: "New Zealand" },
+  { value: "South Africa", label: "South Africa" },
+  { value: "England", label: "England" },
+  { value: "Ireland", label: "Ireland" },
+  { value: "Zimbabwe", label: "Zimbabwe" },
+  { value: "USA", label: "USA" },
+  { value: "Canada", label: "Canada" },
+  { value: "UAE", label: "UAE" },
+  { value: "Netherlands", label: "Netherlands" },
+  { value: "Oman", label: "Oman" },
+  { value: "Nepal", label: "Nepal" },
 ];
 
 const roleOptions = [
@@ -63,12 +65,12 @@ const Login = () => {
     contactNumber: '',
     password: '',
     confirmPassword: '',
-    phone: '',
     country: '',
     role: '',
+    status : 0
   })
 
-  const [errors, setErrors] = useState<Partial<registerData>>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
 
   const handleCountryChange = (option: SingleValue<CountryOption>) => {
@@ -84,6 +86,24 @@ const Login = () => {
       role: option ? option.value : '',
     }));
   };
+
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await apiClient.post('/auth/register', registerData);
+      console.log("Registration success:", response.data);
+  
+      setErrors({});
+    } catch (error: any) {
+      if (error.response?.data?.errorData) {
+        setErrors(error.response.data.errorData);
+      } else {
+        console.error("Registration failed:", error);
+      }
+    }
+  
+  }
+
   
   return (
     <div className="flex items-center justify-center min-h-screen px-4 sm:px-0 bg-gradient-to-br from-blue-200 to-purple-400">
@@ -101,7 +121,7 @@ const Login = () => {
           {state ? 'Login to your account' : 'Create your account'}
         </p>
 
-        <form>
+        <form onSubmit={handleSubmit}>
 
           {/* Dynamic form fields */}
           {state ? (
@@ -287,6 +307,7 @@ const Login = () => {
                       {errors.role 
                             && ( <span className="text-red-500 text-sm ml-2">{errors.role}</span> )}                                        
                     </div>
+                    <input type="hidden" value={registerData.status} />
                   </div>
                 </>
           )}
