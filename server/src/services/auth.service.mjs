@@ -96,7 +96,6 @@ export const sendUserVerifyOtp = async (registerUser) => {
 };
 
 export const verifyEmail = async(verifyData) => {
- console.log(verifyData)
     const errors = {};
     const user = await User.findById(verifyData.id);
 

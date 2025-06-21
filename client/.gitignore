@@ -22,3 +22,40 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# frontend/
+# ├── public/
+# │   └── index.html
+# ├── src/
+# │   ├── assets/
+# │   │   ├── images/
+# │   │   └── styles/
+# │   │       └── tailwind.css
+# │   ├── components/
+# │   │   ├── ui/                   # Generic reusable UI (buttons, cards, modals, etc.)
+# │   │   ├── layout/               # Navbar, Sidebar, Footer
+# │   │   └── auction/              # Specific to auction (Timer, BidCard, etc.)
+# │   ├── composables/             # Custom reusable logic (e.g., useAuth, useAuction)
+# │   ├── layouts/                 # Page layout wrappers (e.g., DefaultLayout, AuthLayout)
+# │   ├── pages/
+# │   │   ├── auth/                # Login, Register, etc.
+# │   │   ├── dashboard/           # Owner or admin dashboards
+# │   │   ├── auction/             # Auction listing, single auction view
+# │   │   └── team/                # Create team, view team, etc.
+# │   ├── router/
+# │   │   └── index.js             # Vue Router config
+# │   ├── store/                   # Pinia or Vuex store modules
+# │   │   ├── auth.js
+# │   │   ├── auction.js
+# │   │   └── user.js
+# │   ├── services/                # API calls (axios clients)
+# │   │   ├── authService.js
+# │   │   ├── auctionService.js
+# │   │   └── userService.js
+# │   ├── utils/                   # Utility functions (formatDate, validators)
+# │   ├── App.vue                  # Root component
+# │   └── main.js                  # Entry file
+# ├── tailwind.config.js
+# ├── postcss.config.js
+# ├── vite.config.js
+# └── package.json

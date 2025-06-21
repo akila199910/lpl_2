@@ -1,4 +1,4 @@
-import { errorResponse } from "../src/utils/apiResponse.mjs";
+import { errorResponse } from "../utils/apiResponse.mjs";
 
 export const errorHandlerMiddleware = (err, req, res, next) => {
 

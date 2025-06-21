@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { errorResponse } from "../src/utils/apiResponse.mjs";
+import { errorResponse } from "../utils/apiResponse.mjs";
 
 export const authMiddleware = (req, res, next) => {
   try {
@@ -13,7 +13,7 @@ export const authMiddleware = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.body.id = decoded.id;
-
+    
     req.user = {
       email: decoded.email,
       role: decoded.role
