@@ -1,13 +1,30 @@
 <!-- pages/auth/Login.vue -->
 <template>
+    
   <AuthLayout>
+
     <form @submit.prevent="handleLogin" class="space-y-4">
+
       <h2 class="text-2xl font-bold mb-4 text-wrap break-all">Login</h2>
+
       <BaseInput v-model="email" type="email" placeholder="premierleague@gmail.com" />
+
+      <p v-if="authStore.errors?.email" class="text-sm text-red-500">
+        {{ authStore.errors.email }}
+      </p>
+
       <BaseInput v-model="password" type="password" placeholder="Password" />
+
+      <p v-if="authStore.errors?.password" class="text-sm text-red-500">
+        {{ authStore.errors.password }}
+      </p>
+
       <BaseButton class=" text-wrap break-all overflow-hidden">Login</BaseButton>
+
     </form>
+
   </AuthLayout>
+
 </template>
 
 <script setup>
