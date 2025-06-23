@@ -1,45 +1,26 @@
 <script setup>
-import { ref } from 'vue';
-import Navbar from '../components/layout/Navbar.vue';
-import Sidebar from '../components/layout/Sidebar.vue';
+import Navbar from '../components/layout/Navbar.vue'
+import Sidebar from '../components/layout/Sidebar.vue'
+import { ref } from 'vue'
 
-const sidebarExpanded = ref(false);
-const navMenuOpen = ref(false);
-
-function toggleSidebar() {
-  sidebarExpanded.value = !sidebarExpanded.value;
-};
+const sidebarOpen = ref(false);
 </script>
 
+<!-- AppLayout.vue -->
 <template>
-  <div class="dark:bg-boxdark-2 dark:text-bodydark">
+  <div class="h-screen flex flex-col">
+    <Navbar @toggle-sidebar="sidebarOpen = !sidebarOpen" />
 
-    <!-- Header -->
-    <Navbar @toggle-sidebar="toggleSidebar" />
-
-    <!-- Layout -->
-    <div class="relative h-[calc(100vh-64px)] flex">
-
+    <div class="flex flex-1 overflow-hidden">
       <!-- Sidebar -->
-      <div
-        :class="[
-          'h-full fixed top-[80px] bg-yellow-50 overflow-y-auto transition-all duration-300',
-          sidebarExpanded ? 'w-64' : 'w-16'
-        ]"
-      >
-        <Sidebar :expanded="sidebarExpanded" />
-      </div>
+      <Sidebar :expanded="sidebarOpen" />
 
       <!-- Main content -->
-      <div class="ml-16 transition-all duration-300" :class="sidebarExpanded ? 'ml-64' : 'ml-16'">
-        <main class="p-6 min-h-full max-w-screen-2xl mx-auto">
-          <div class="space-y-6">
-            <div class="h-96 bg-gray-100">Main Block sfwgfregfrefrefcef1</div>
-            <div class="h-96 bg-gray-200">Main Block 2</div>
-            <div class="h-96 bg-gray-300">Main Block 3</div>
-          </div>
-        </main>
+      <div class="flex-1 overflow-y-auto p-4">
+        <slot />
       </div>
     </div>
   </div>
 </template>
+
+

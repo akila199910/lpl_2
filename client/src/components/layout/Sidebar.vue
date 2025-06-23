@@ -1,16 +1,38 @@
 <script setup>
+import { Icon } from '@iconify/vue';
+import { RouterLink } from 'vue-router';
+
 defineProps({ expanded: Boolean });
+
+const navItems = [
+  { id: 1, icon: 'material-symbols:dashboard', label: 'Dashboard', link: '/dashboard' },
+  { id: 2, icon: 'material-symbols:home', label: 'Home', link: '/home' },
+  { id: 3, icon: 'mdi:users', label: 'Users', link: '/users' },
+  { id: 4, icon: 'mdi:cricket', label: 'Players', link: '/players' },
+  { id: 5, icon: 'ri:team-fill', label: 'Teams', link: '/teams' },
+  { id: 6, icon: 'ic:baseline-message', label: 'Messages', link: '/messages' },
+  { id: 7, icon: 'mingcute:auction-fill', label: 'Auction', link: '/auction' },
+  { id: 8, icon: 'iconamoon:profile-fill', label: 'Profile', link: '/my-profile' },
+  { id: 9, icon: 'uil:setting', label: 'Settings', link: '/settings' },
+  { id: 10, icon: 'ri:logout-circle-fill', label: 'Logout', link: '/logout' },
+  ];
 </script>
 
 <template>
-  <div class="py-4 space-y-4">
+  <div class="py-4 space-y-4 overflow-y-auto">
     <nav>
       <ul class="space-y-2">
-        <li class="flex items-center gap-3 px-4 py-2 hover:bg-gray-200">
-          <Icon icon="mdi:calendar" class="w-5 h-5" />
-          <span v-if="expanded" class="whitespace-nowrap">Calendar</span>
+        <li v-for="item in navItems" :key="item.id">
+          <RouterLink
+            :to="item.link"
+            class="flex items-center gap-3 hover:bg-gray-200 px-2 py-2 rounded-md"
+          >
+            <Icon :icon="item.icon" class="w-6 h-6" />
+            <span v-if="expanded" class="whitespace-nowrap transition-opacity duration-200 opacity-100">
+              {{ item.label }}
+            </span>
+          </RouterLink>
         </li>
-        <!-- Add more links the same way -->
       </ul>
     </nav>
   </div>
