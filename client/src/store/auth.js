@@ -1,6 +1,7 @@
 // store/auth.js
 import { defineStore } from 'pinia';
 import authService from '../services/authService';
+import router from '../router';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -36,6 +37,7 @@ export const useAuthStore = defineStore('auth', {
                     this.errors = null;
 
                     // Redirect after login
+                    router.push('/dashboard');
                     // if (res.data.role === 'Admin') router.push('/admin');
                     // else if (res.data.role === 'Bat') router.push('/bat');
                     // else router.push('/dashboard');
