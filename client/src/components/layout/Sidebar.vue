@@ -19,21 +19,19 @@ const navItems = [
 </script>
 
 <template>
-  <div class="py-4 space-y-4 overflow-y-auto">
-    <nav>
+  <div class=" space-y-4 overflow-y-auto mt-4 ">
       <ul class="space-y-2">
-        <li v-for="item in navItems" :key="item.id">
+        <li v-for="item in navItems" :key="item.id" class="flex ">
           <RouterLink
             :to="item.link"
-            class="flex items-center gap-3 hover:bg-gray-200 px-2 py-2 rounded-md"
+            class="flex items-center gap-8 hover:bg-gray-200 px-2 py-2 rounded-md mx-2"
           >
             <Icon :icon="item.icon" class="w-6 h-6" />
-            <span v-if="expanded" class="whitespace-nowrap transition-opacity duration-200 opacity-100">
+            <span v-if="expanded" class="whitespace-nowrap transition-opacity duration-200 opacity-100 w-36 ">
               {{ item.label }}
             </span>
           </RouterLink>
         </li>
       </ul>
-    </nav>
   </div>
 </template>

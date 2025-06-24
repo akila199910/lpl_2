@@ -24,6 +24,13 @@ import StatCard from '../../components/ui/StatCard.vue';
       <StatCard label="Bids Today" :value="41" />
       <StatCard label="Bids Today" :value="41" />
       <StatCard label="Bids Today" :value="41" />
+            <StatCard label="Bids Today" :value="41" />
+      <StatCard label="Bids Today" :value="41" />
+      <StatCard label="Bids Today" :value="41" />
+      <StatCard label="Bids Today" :value="41" />      <StatCard label="Bids Today" :value="41" />
+      <StatCard label="Bids Today" :value="41" />
+      <StatCard label="Bids Today" :value="41" />
+      <StatCard label="Bids Today" :value="41" />
     </div>
   </DashboardLayout>
 </template>
