@@ -16,7 +16,12 @@ const sidebarOpen = ref(false);
       <Sidebar :expanded="sidebarOpen" />
 
       <!-- Main content -->
-      <div class="flex-1 overflow-y-auto p-4 shadow">
+        <div
+          :class="[
+            'flex-1 overflow-y-auto p-4 shadow',
+            sidebarOpen ? 'hidden sm:block' : ''
+          ]"
+        >
         <slot />
       </div>
     </div>

@@ -1,5 +1,6 @@
 <script setup>
     defineProps(['title', 'buttonText', 'buttonLink']);
+    const emit = defineEmits(['addNew']);
 </script>
 
 <template>
@@ -9,10 +10,12 @@
          {{ title }}
         </h1>
         <button
-          class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded shadow transition duration-200"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 
+          rounded shadow transition duration-200"
+          @click="emit('addNew')"
         >
           {{ buttonText }}
         </button>
-      </div>
+    </div>
 
 </template>

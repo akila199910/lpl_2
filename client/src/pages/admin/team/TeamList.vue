@@ -52,7 +52,11 @@ function handleDelete(team) {
   <DashboardLayout>
     <div class="w-full px-4 sm:px-6 lg:px-8 py-4">
       
-      <TableHeader title='Teams Overview' buttonText="Add New Team" buttonLink="/admin/teams/create"/>
+      <TableHeader title='Teams Overview' 
+                buttonText="Add New Team" 
+                buttonLink="/teams/create"
+                @addNew="$router.push('/teams/create')"
+      />
 
       <!-- Table Section -->
       <div class="bg-white rounded-lg shadow-md p-4">
