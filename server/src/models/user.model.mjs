@@ -27,20 +27,6 @@ userSchema.virtual('profile', {
     foreignField: 'user',
     justOne: true
   });
-
-  // userSchema.virtual('bids', {
-  //   ref: 'Bid',
-  //   localField: '_id',
-  //   foreignField: 'user',
-  //   justOne: false
-  // });
-  
-  // userSchema.virtual('team', {
-  //   ref: 'Team',
-  //   localField: '_id',
-  //   foreignField: 'user',
-  //   justOne: true
-  // });
   
   userSchema.set('toObject', { virtuals: true });
   userSchema.set('toJSON', { virtuals: true });
