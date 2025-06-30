@@ -1,7 +1,7 @@
 import { validationResult } from "express-validator";
-import { ErrorResponse } from "../utils/ErrorResponse.mjs";
+import { errorResponse } from "../utils/apiResponse.mjs";
 
-export const handleValidationErrors = (message = "Validation failed", statusCode = 400) => {
+export const handleValidationErrors = (m) => {
   return (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -11,7 +11,7 @@ export const handleValidationErrors = (message = "Validation failed", statusCode
           errorObject[err.path] = err.msg;
         }
       });
-      return next(new ErrorResponse(message, statusCode, errorObject));
+      return res.status(400).json(errorResponse(m,errorObject));
     }
     next();
   };

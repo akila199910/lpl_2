@@ -4,8 +4,8 @@ export const successResponse = (message, data = null) => ({
     data
 });
 
-export const errorResponse = (message) => ({
+export const errorResponse = (message,errors = null) => ({
     success: false,
     message,
-    data: null
+    errors
 });

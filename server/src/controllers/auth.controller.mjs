@@ -1,95 +1,68 @@
-import { loginUser, registerUser, resetUserPassword, sendUserPasswordResetOtp, sendUserVerifyOtp, verifyEmail } from "../services/auth.service.mjs";
-import { successResponse } from "../utils/apiResponse.mjs";
-import { generateToken } from "../utils/generateToken.mjs";
+import {
+  loginUserService,
+  registerUserService,
+  logOutUserService,
+  sendUserVerifyOtpService,
+  verifyEmailService,
+  sendUserPasswordResetOtpService,
+  resetUserPasswordService
+} from '../services/auth.service.mjs';
 
-
-// user log in function
-export const login = async(req,res,next) => {
-
-    try {
-        const { user } = await loginUser(req.body);
-        const token = generateToken(user);
-
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false, 
-            sameSite: "strict",
-            maxAge: 24 * 60 * 60 * 1000
-          });
-
-        res.status(200).json(successResponse("User login successfully", user))
-    } catch (error) {
-        next(error);
-    }
+export const loginUserController = async (req, res, next) => {
+  try {
+    const result = await loginUserService(req,res);
+    return res.status(result.success ? 200 : 400).json(result);
+  } catch (err) {
+    next(err);
+  }
 };
 
-// user register function
-export const register = async (req, res, next) => {
-
-    try {
-      const result = await registerUser(req.body);
-      res.status(201).json(successResponse("User registered successfully", result));
-    } catch (error) {
-      next(error);
-    }
+export const registerUserController = async (req, res, next) => {
+  try {
+    const result = await registerUserService(req.body);
+    return res.status(result.success ? 201 : 400).json(result);
+  } catch (err) {
+    next(err);
+  }
 };
 
-//user logout function
-export const logout = (req, res, next) => {
-    try {
-      res.clearCookie("token");
-      res.status(200).json(successResponse("User logout successfully"));
-    } catch (error) {
-      next(error);
-    }
-  };
+export const logOutUserController = async (req, res, next) => {
+  const result = await logOutUserService(req,res);
+  return res.status(result.success ? 200 : 400).json(result);
+};
 
-  // send verify otp to user, to verify registered account
-export const sendVerifyOtp = async(req, res, next) => {
-    try {
-      const result = await sendUserVerifyOtp(req.body);
-      res.status(200).json(successResponse("OTP sent successfully",result));
-    } catch (error) {
-      next(error);
-    }
-  };
-
-
-// verify user account using otp
-export const verifyAccount = async(req, res, next) => {
+export const sendVerifyOtpController = async (req, res, next) => {
   try {
-    const result = await verifyEmail(req.body);
-    res.status(200).json(successResponse("Account verify successfully",result));
-  } catch (error) {
-    next(error);
+    const result = await sendUserVerifyOtpService(req.body);
+    return res.status(result.success ? 200 : 400).json(result);
+  } catch (err) {
+    next(err);
   }
-}
+};
 
-// check user authentication 
-export const isUserAuthenticated = (req, res, next) => {
-    try {
-      res.status(200).json(successResponse("User is authenticated", req.user));
-    } catch (error) {
-      next(error);
-    }
-  };
-  
-// send password reset otp
-export const sendPasswordResetOtp = async(req, res, next) => {
-    try {
-      const result = await sendUserPasswordResetOtp(req.body);
-      res.status(200).json(successResponse("Password reset OTP sent successfully",result));
-    } catch (error) {
-      next(error);
-    }
-}
-
-//password reset 
-export const passwordReset = async(req, res, next) => {
+export const verifyEmailController = async (req, res, next) => {
   try {
-    const result = await resetUserPassword(req.body);
-    res.status(200).json(successResponse("Password reset successfully",result));
-  } catch (error) {
-    next(error);
+    const result = await verifyEmailService(req.body);
+    return res.status(result.success ? 200 : 400).json(result);
+  } catch (err) {
+    next(err);
   }
-}
+};
+
+export const sendResetOtpController = async (req, res, next) => {
+  try {
+    const result = await sendUserPasswordResetOtpService(req.body);
+    return res.status(result.success ? 200 : 400).json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const resetPasswordController = async (req, res, next) => {
+  try {
+    const result = await resetUserPasswordService(req.body);
+    return res.status(result.success ? 200 : 400).json(result);
+  } catch (err) {
+    next(err);
+  }
+};
