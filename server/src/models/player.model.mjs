@@ -1,0 +1,51 @@
+import mongoose from "mongoose";
+
+const playerSchema = new mongoose.Schema({
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+
+    team_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Team',
+        required: false,
+    },
+
+    batting_style: {
+        type: Number,
+        enum: [0, 1], // 0 = Left-handed, 1 = Right-handed
+        required: true
+        },
+
+    bowling_style: { 
+        type: Number, 
+        enum: [0, 1,2,3,4,5,6,7,8,9], // 0 = Right-arm fast, 1 = Right-arm medium, 2 = Right-arm off break, 3 = Left-arm fast, 4 = Left-arm medium, 5 = Left-arm off break , 6 = Leg break, 7 = Arm break , 8 = Head break, 9 = Other
+        required: true 
+        },
+
+    batting_average: { type: Number, required: false },
+    bowling_average: { type: Number, required: false },
+    batting_strike_rate: { type: Number, required: false, default: null},
+    bowling_strike_rate: { type: Number, required: false, default: null},
+    batting_runs: { type: Number, required: false , default: null},    
+    bowling_wickets: { type: Number, required: false , default: null},
+    bowling_economy: { type: Number, required: false , default: null},
+    number_of_matches: { type: Number, required: false , default: null},
+    number_of_innings: { type: Number, required: false , default: null},
+    number_of_runs: { type: Number, required: false , default: null},   
+    number_of_fours: { type: Number, required: false , default: null},
+    number_of_sixes: { type: Number, required: false , default: null},
+    number_of_hundreds: { type: Number, required: false , default: null},
+    number_of_fifties: { type: Number, required: false , default: null},
+    number_of_catches: { type: Number, required: false , default: null},
+    number_of_stumpings: { type: Number, required: false , default: null},
+
+    status: { type: Number, required: true, enum: [0,1,2,3,4,5,6] }, // 0 = Pending, 1 = Approved, 2 = Rejected, 3 = contracted, 4 = sold, 5 = unsold , 6 = inactive
+});
+
+playerSchema.set('toObject', { virtuals: true });
+playerSchema.set('toJSON', { virtuals: true });
+
+export default mongoose.model('Player', playerSchema);
