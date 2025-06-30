@@ -2,29 +2,33 @@ import { Router } from "express";
 import { accountVerifyValidation, loginValidation, passwordResetOtpValidation, 
   passwordResetValidation, registerValidation } from "../validations/auth.validation.mjs";
 import { authMiddleware } from "../middlewares/authMiddleware.mjs";
-import { isUserAuthenticated, login, passwordReset, register, sendPasswordResetOtp, sendVerifyOtp, verifyAccount } from "../controllers/auth.controller.mjs";
+import {loginUserController,  logOutUserController,  registerUserController, resetPasswordController, sendResetOtpController, sendVerifyOtpController, verifyEmailController } from "../controllers/auth.controller.mjs";
 import { handleValidationErrors } from "../middlewares/validationErrorHandler.mjs";
 
 const authRouter = Router();
+
+authRouter.get('/me', authMiddleware, (req, res) => {
+  res.json({ success: true, data: req.user });
+});
 
 authRouter.post(
   "/register",
   registerValidation,
   handleValidationErrors("Register validation failed"),
-  register
+  registerUserController
 );
 
 authRouter.post(
   "/login",
   loginValidation,
   handleValidationErrors("Login validation failed"),
-  login
+  loginUserController
 );
 
 authRouter.post(
   "/send-verify-otp",
   authMiddleware,
-  sendVerifyOtp
+  sendVerifyOtpController
 );
 
 authRouter.post(
@@ -32,27 +36,30 @@ authRouter.post(
   authMiddleware,
   accountVerifyValidation,
   handleValidationErrors("Account verification failed", 401),
-  verifyAccount
+  verifyEmailController
 );
 
-authRouter.get(
-  "/is-authenticated",
-  authMiddleware,
-  isUserAuthenticated
-);
+// authRouter.get(
+//   "/is-authenticated",
+//   authMiddleware,
+  
+// );
 
 authRouter.post(
   "/send-password-reset-otp",
   passwordResetOtpValidation,
   handleValidationErrors("Reset OTP validation failed"),
-  sendPasswordResetOtp
+  sendResetOtpController
 );
 
 authRouter.post(
   "/password-reset",
   passwordResetValidation,
   handleValidationErrors("Password reset validation failed"),
-  passwordReset
+  resetPasswordController
 );
-
+authRouter.post(
+  "/logout",
+  logOutUserController
+)
 export default authRouter;

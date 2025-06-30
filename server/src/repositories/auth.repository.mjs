@@ -1,72 +1,61 @@
-import User from "../models/user.model.mjs";
-import UserProfile from "../models/userProfile.model.mjs";
+import User from '../models/user.model.mjs';
+import userProfileModel from '../models/userProfile.model.mjs';
 
-export const saveUserWithProfile = async (userData, profileImage = "user.png") => {
+export const findUserByEmail = (email) => User.findOne({ email });
+export const saveUser = (user) => user.save();
 
-  const user = new User(userData);
+export const saveAuthRepository = async (registeredUser) => {
+  const user = new User(registeredUser);
   const savedUser = await user.save();
 
-  const userProfile = new UserProfile();
-        userProfile.user = savedUser._id;
-        userProfile.profileImageUrl = profileImage;
-        await userProfile.save();       
+  const userProfile = new userProfileModel({
+    user: savedUser._id,
+    profileImageUrl: "user.png",
+  });
+  await userProfile.save();
 
-  return savedUser;
-};
-export const saveOtp = async (userId, otp, otpExpireAt) => {
-
-  const updatedUser = await User.findByIdAndUpdate(
-    userId,
-    {
-      verifyOtp: otp,
-      verifyOtpExpireAt: otpExpireAt,
-    },
-    { new: true } 
-  );
-
-  return updatedUser._id.toString();
+  return {savedUser };
 };
 
-export const verifyUserAccount = async(userId)=>{
-
+export const otpSaveAuthRepository = async (otpData) => {
   const updatedUser = await User.findByIdAndUpdate(
-    userId,
-    {
-      isAccountVerified: true,
-      verifyOtp: '',
-      verifyOtpExpireAt: 0,
-    },
-    { new: true } 
-  );
-
-  return updatedUser._id.toString();
-}
-
-export const saveResetOtp = async (userId, resetOtp, resetOtpExpireAt) => {
-
-  const updatedUser = await User.findByIdAndUpdate(
-    userId,
-    {
-      resetOtp: resetOtp,
-      resetOtpExpireAt: resetOtpExpireAt,
-    },
-    { new: true } 
-  );
-
-  return updatedUser._id.toString();
-};
-
-export const updatePassword = async (userId, hashedPassword) => {
-
-  const updatedUser = await User.findByIdAndUpdate(
-      userId,
+      otpData.userId,
       {
-        password: hashedPassword,
-        resetOtp: '',
-        resetOtpExpireAt: 0,
+        verifyOtp : otpData.otp,
+        verifyOtpExpireAt : otpData.verifyOtpExpireAt
       },
-      { new: true } 
+      { new: true }
     );
 
-  return updatedUser._id.toString();
+  return { updatedUser };
+}
+
+export const verifyEmailAuthRepository = async(emailVerifyData)=>{
+
+  const updatedUser = await User.findByIdAndUpdate(
+        emailVerifyData.userId,
+        {
+          isAccountVerified : emailVerifyData.isAccountVerified,
+          verifyOtpExpireAt : emailVerifyData.verifyOtpExpireAt,
+          verifyOtp : emailVerifyData.verifyOtp
+        },
+        { new: true }
+      );
+
+    return { updatedUser };
+}
+
+export const resetUserPasswordRepository = async(resetData)=>{
+
+  const updatedUser = await User.findByIdAndUpdate(
+          resetData.userId,
+          {
+            password : resetData.password,
+            resetOtp : resetData.resetOtp,
+            resetOtpExpireAt : resetData.resetOtpExpireAt
+          },
+          { new: true }
+        );
+
+      return { updatedUser };
 }
