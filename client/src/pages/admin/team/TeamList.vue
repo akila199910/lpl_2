@@ -1,51 +1,74 @@
 <script setup>
-import 'vue3-easy-data-table/dist/style.css'
-import DashboardLayout from '../../../layouts/DashboardLayout.vue'
-import EasyDataTable from '../../../components/layout/EasyDataTable.vue'
-import TableHeader from '../../../components/ui/TableHeader.vue'
+import 'vue3-easy-data-table/dist/style.css';
+import { ref, onMounted } from 'vue';
+import DashboardLayout from '../../../layouts/DashboardLayout.vue';
+import EasyDataTable from '../../../components/layout/EasyDataTable.vue';
+import TableHeader from '../../../components/ui/TableHeader.vue';
+import { getTeamById, getTeams } from '../../../services/teamService.mjs';
+import { useRouter } from 'vue-router';
+import logo from '../../../assets/download.png'
+
 
 const columns = [
-  {  text: 'ID', value: 'id' },
+  { text: 'ID', value: 'id' },
   { text: 'Name', value: 'name' },
-  { text: 'Coach', value: 'coach' },
-  { text: 'Actions', value: 'actions', sortable: false }
-   ]
+  { text: 'Owner Name', value: 'owner_id.name' },
+  { text: 'Status', value: 'status' },
+  { text: 'Logo', value: 'logo' },
+  { text: 'Actions', value: 'actions', sortable: false },
+];
 
-const teams = [
-  { id: 1, name: 'Team A', coach: 'Coach X' },
-  { id: 2, name: 'Team B', coach: 'Coach Y' },
-  { id: 3, name: 'Team C', coach: 'Coach Z' },
-  { id: 4, name: 'Team A', coach: 'Coach X' },
-  { id: 5, name: 'Team B', coach: 'Coach Y' },
-  { id: 6, name: 'Team C', coach: 'Coach Z' },
-  { id: 7, name: 'Team A', coach: 'Coach X' },
-  { id: 8, name: 'Team B', coach: 'Coach Y' },
-  { id: 9, name: 'Team C', coach: 'Coach Z' },{ id: 22, name: 'Team A', coach: 'Coach X' },
-  { id: 10, name: 'Team B', coach: 'Coach Y' },
-  { id: 11, name: 'Team C', coach: 'Coach Z' },{ id: 23, name: 'Team A', coach: 'Coach X' },
-  { id: 12, name: 'Team B', coach: 'Coach Y' },
-  { id: 13, name: 'Team C', coach: 'Coach Z' },{ id: 24, name: 'Team A', coach: 'Coach X' },
-  { id: 14, name: 'Team B', coach: 'Coach Y' },
-  { id: 15, name: 'Team C', coach: 'Coach Z' },{ id: 25, name: 'Team A', coach: 'Coach X' },
-  { id: 16, name: 'Team B', coach: 'Coach Y' },
-  { id: 17, name: 'Team C', coach: 'Coach Z' },{ id: 26, name: 'Team A', coach: 'Coach X' },
-  { id: 18, name: 'Team B', coach: 'Coach Y' },
-  { id: 19, name: 'Team C', coach: 'Coach Z' },{ id: 27, name: 'Team A', coach: 'Coach X' },
-  { id: 20, name: 'Team B', coach: 'Coach Y' },
-  { id: 21, name: 'Team C', coach: 'Coach Z' }
-  // Add more for pagination
-]
+const teams = ref([]);
+const loading = ref(true);
+const errors = ref(null);
+const selectedTeam = ref();
+const showModal = ref(false);
+const router = useRouter();
 
-function handleView(team) {
-  console.log('View:', team);
+
+
+// Lifecycle hook to fetch data
+onMounted(async () => {
+  try {
+    const response = await getTeams();
+    if (response.data.success === true) {
+      teams.value = response.data.data;
+    }
+  } catch (err) {
+    if (err.response?.data?.errors) {
+      errors.value = err.response.data.errors;
+      console.log('Fetch error:', err.response.data.errors);
+    }
+  } finally {
+    loading.value = false;
+  }
+});
+ 
+async function handleView(team) {
+ 
+  try {
+    const response = await getTeamById(team);
+    if (response.data.success === true) {
+        selectedTeam.value = response.data.data;
+        showModal.value = true
+    }
+  } catch (err) {
+    if (err.response?.data?.errors) {
+      errors.value = err.response.data.errors;
+      console.log('Fetch error:', err.response.data.errors);
+    }
+  } finally {
+    loading.value = false;
+  }
 }
-function handleEdit(team) {
-  console.log('Edit:', team);
+
+ function handleEdit(team) {
+    router.push(`/teams/update/${team}`);
+
 }
 function handleDelete(team) {
   console.log('Delete:', team);
 }
-
 </script>
 
 <template>
@@ -69,8 +92,94 @@ function handleDelete(team) {
         />
       </div>
     </div>
+
+<!-- View Team Modal -->
+<div
+  v-if="showModal"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 px-4"
+>
+ <div class="bg-white rounded-2xl shadow-xl w-full max-w-3xl p-6 relative overflow-y-auto max-h-[90vh]">    <!-- Close Button -->
+    <button
+      @click="showModal = false"
+      class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl"
+    >
+      &times;
+    </button>
+
+    <!-- Modal Content -->
+    <h2 class="text-2xl font-bold mb-6 text-center">Team Details</h2>
+
+    <div v-if="selectedTeam" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+      <!-- Logo -->
+      <div class="flex items-center gap-4 sm:col-span-2">
+        <img :src="selectedTeam.logo == 'user.png' ? logo : selectedTeam.logo" alt="Logo" class="w-16 h-16 rounded-full object-cover" />
+        <div>
+          <p class="text-sm text-gray-500">Team ID</p>
+          <p class="text-sm font-medium">{{ selectedTeam.id }}</p>
+        </div>
+      </div>
+
+      <!-- Team Name -->
+      <div>
+        <p class="text-sm text-gray-500">Team Name</p>
+        <p class="text-base font-semibold break-words">{{ selectedTeam.name }}</p>
+      </div>
+
+      <!-- Owner Name -->
+      <div>
+        <p class="text-sm text-gray-500">Owner Name</p>
+        <p class="text-base font-semibold break-words">{{ selectedTeam.owner_id?.name }}</p>
+      </div>
+
+      <!-- Status -->
+      <div>
+        <p class="text-sm text-gray-500">Status</p>
+        <p class="text-base font-semibold">{{ selectedTeam.status === 1 ? 'Active' : 'Inactive' }}</p>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <p class="text-sm text-gray-500">Contact Number</p>
+        <p class="text-base font-semibold">{{ selectedTeam.owner_id?.contactNumber }}</p>
+      </div>
+
+      <!-- Contracts -->
+      <div>
+        <p class="text-sm text-gray-500">Total Contracts</p>
+        <p class="text-base font-semibold">{{ selectedTeam.total_contract }}</p>
+      </div>
+
+      <!-- Bids -->
+      <div>
+        <p class="text-sm text-gray-500">Total Bids</p>
+        <p class="text-base font-semibold">{{ selectedTeam.total_bids }}</p>
+      </div>
+      <!-- Bids -->
+      <div>
+        <p class="text-sm text-gray-500">Total Bids</p>
+        <p class="text-base font-semibold">{{ selectedTeam.total_bids }}</p>
+      </div><!-- Bids -->
+      <div>
+        <p class="text-sm text-gray-500">Total Bids</p>
+        <p class="text-base font-semibold">{{ selectedTeam.total_bids }}</p>
+      </div><!-- Bids -->
+      <div>
+        <p class="text-sm text-gray-500">Total Bids</p>
+        <p class="text-base font-semibold">{{ selectedTeam.total_bids }}</p>
+      </div>
+      <!-- Bids -->
+      <div>
+        <p class="text-sm text-gray-500">Total Bids</p>
+        <p class="text-base font-semibold">{{ selectedTeam.total_bids }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
   </DashboardLayout>
-</template>
+  </template>
 
 
 

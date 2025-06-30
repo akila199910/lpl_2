@@ -33,15 +33,15 @@ const emit = defineEmits(['view', 'edit', 'delete']);
         border-cell
     >
     <!-- Custom slot for Actions column -->
-      <template #item-actions="{ items, name }">
+      <template #item-actions="{ items, id }">
         <div class="flex items-center gap-2 justify-center">
-          <button @click="$emit('view', name)" title="View">
+          <button @click="$emit('view', id)" title="View">
             <Icon icon="mdi:eye" class="w-5 h-5 text-blue-500 hover:text-blue-700" />
           </button>
-          <button @click="$emit('edit', name)" title="Edit">
+          <button @click="$emit('edit', id)" title="Edit">
             <Icon icon="mdi:pencil" class="w-5 h-5 text-green-500 hover:text-green-700" />
           </button>
-          <button @click="$emit('delete', name)" title="Delete">
+          <button @click="$emit('delete', id)" title="Delete">
             <Icon icon="mdi:delete" class="w-5 h-5 text-red-500 hover:text-red-700" />
           </button>
         </div>

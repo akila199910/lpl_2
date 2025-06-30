@@ -1,4 +1,3 @@
-// store/auth.js
 import { defineStore } from 'pinia';
 import authService from '../services/authService';
 import router from '../router';
@@ -12,6 +11,24 @@ export const useAuthStore = defineStore('auth', {
     }),
 
     actions: {
+
+        async checkAuth(){
+            try {
+                const response = await authService.getCurrentUser();
+                this.user = response.data.data;
+                this.success = response.data.success;
+            }
+            catch (error){
+                this.user = null;
+                this.success = false;
+            }
+        },
+        async logout() {
+            await authService.logout();
+                this.user = null;
+                this.success = false;
+                router.push('/login');
+        },
         async login(payload) {
             
             this.success = false;
@@ -24,13 +41,11 @@ export const useAuthStore = defineStore('auth', {
                 const res = response.data;
 
                 if (!res.success) {
-                    // Login failed (but not a server error)
                     this.success = false;
                     this.message = res.message;
                     this.user = null;
                     this.errors = res.errorData;
                 } else {
-                    //  Login success
                     this.success = true;
                     this.message = res.message;
                     this.user = res.data;
@@ -41,7 +56,6 @@ export const useAuthStore = defineStore('auth', {
                     // if (res.data.role === 'Admin') router.push('/admin');
                     // else if (res.data.role === 'Bat') router.push('/bat');
                     // else router.push('/dashboard');
-                    console.log('Login success:', this.user, this.message);   
                 }
             } 
             catch (error) {
