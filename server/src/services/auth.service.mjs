@@ -1,175 +1,152 @@
-import bcrypt from "bcryptjs";
-import User from "../models/user.model.mjs";
-import { ErrorResponse } from "../utils/ErrorResponse.mjs";
-import { saveOtp, saveResetOtp, saveUserWithProfile, updatePassword, verifyUserAccount } from "../repositories/auth.repository.mjs";
+import User from '../models/user.model.mjs';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { successResponse, errorResponse } from '../utils/apiResponse.mjs';
+import { findUserByEmail, otpSaveAuthRepository, resetUserPasswordRepository, saveAuthRepository, verifyEmailAuthRepository } from '../repositories/auth.repository.mjs';
 import transport from "../configs/nodemailer.mjs";
 
-export const loginUser = async(loginUser) => {
-    const errors = {};
+export const loginUserService = async (req,res) => {
+  const user = await User.findOne({ email: req.body.email });
 
-    const user = await User.findOne({ email:loginUser.email });
-    if(!user) errors.email = "Email is not found our system";
+  if (!user) return errorResponse('User not found',{email: "email is not in the database"});
 
-    if(user){
-        const isMatch = await bcrypt.compare(loginUser.password, user.password);
-        if(!isMatch) errors.password = "Password is incorrect";
-    }
-    
-    if (Object.keys(errors).length > 0) {
-        throw new ErrorResponse("User login failed", 401, errors);
-    }
-    
-    return { user: { id: user._id.toString(), name: user.name, email: user.email, role: user.role} };
-}
-export const registerUser = async (registerUser) => {
+  const isMatch = await bcrypt.compare(req.body.password, user.password);
+  if (!isMatch) return errorResponse('Password is incorrect',{password: "Password is incorrect"});
 
-    const errors = {};
+  const token = jwt.sign({ id: user._id, role : user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-    const isUserExit = await User.findOne({ email: registerUser.email });
-    if (isUserExit) errors.email = "Email already exists";
+  res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'Lax', // or 'Strict' in production
+      secure: false, // true if using https
+      maxAge: 3600000, // 1 hour
+    });
 
-    const isContactExit = await User.findOne({ contactNumber: registerUser.contactNumber });
-    if (isContactExit) errors.contactNumber = "Contact number already exists";
-
-    if (Object.keys(errors).length > 0) {
-        throw new ErrorResponse("User register failed", 400, errors);
-    }
-
-    const hashedPassword = await bcrypt.hash(registerUser.password, 10);
-
-    const registerUserData = {
-        firstName: registerUser.firstName,
-        lastName: registerUser.lastName,
-        name: `${registerUser.firstName} ${registerUser.lastName}`,
-        contactNumber: registerUser.contactNumber,
-        status: registerUser.status,
-        email: registerUser.email,
-        password: hashedPassword,
-        country: registerUser.country,
-        role: registerUser.role,
-      };
-    
-    const savedUser = await saveUserWithProfile(registerUserData, registerUser.profile);
-
-    // send the welcome email to register user
-
-    const mailOptions = {
-        from: process.env.MAIL_FROM_ADDRESS,
-        to: savedUser.email,
-        subject: "Welcome to LPL",
-        text: `Hello ${savedUser.name}, welcome to lanka premier league. We are excited to have you join us!`,
-    };
-
-    await transport.sendMail(mailOptions);
-
-    return { user: { id: savedUser._id, name: savedUser.name, email: savedUser.email } };
-}
-
-export const logoutUser = async () => {}
-
-export const sendUserVerifyOtp = async (registerUser) => {
-    const errors = {};
-  
-    const user = await User.findById(registerUser.id);
-  
-    if (!user) errors.user = "User not found";
-    if (user?.isAccountVerified) errors.isAccountVerified = "Account is already verified";
-  
-    if (Object.keys(errors).length > 0) {
-      throw new ErrorResponse("User account verification code send failed", 404, errors);
-    }
-  
-    const otp = String(Math.floor(100000 + Math.random() * 900000));
-    const otpExpireAt = Date.now() + 5 * 60 * 1000;
-    const savedUser = await saveOtp(user._id.toString(), otp, otpExpireAt);
-  
-    const mailOptions = {
-      from: process.env.MAIL_FROM_ADDRESS,
-      to: user.email,
-      subject: "Account Verification",
-      text: `Hello ${user.name}, your account verification code is ${otp}`,
-    };
-  
-    await transport.sendMail(mailOptions);
-  
-    return { id: savedUser };
+  return successResponse('User logged in successfully',{ user, token });
 };
 
-export const verifyEmail = async(verifyData) => {
-    const errors = {};
-    const user = await User.findById(verifyData.id);
+export const registerUserService = async (payload) => {
 
-    if(!user)
-         errors.user = "User not found";
+   const errors = {};
+    if (await User.findOne({ email: payload.email })) errors.email = "Email already exists";
+    if (await User.findOne({ contactNumber: payload.contactNumber })) errors.contactNumber = "Contact number already exists";
+    if (Object.keys(errors).length > 0) return errorResponse("Validation failed", errors);
 
-    if(user?.isAccountVerified)
-         errors.isAccountVerified = "Account is already verified";
+  const hashedPassword = await bcrypt.hash(payload.password, 10);
 
-    if(user?.verifyOtp === ""||user?.verifyOtp !== verifyData.otp)
-         errors.otp = "OTP is incorrect";
+  const registeredUser = {
+    firstName: payload.firstName,
+    lastName: payload.lastName,
+    name: `${payload.firstName} ${payload.lastName}`,
+    contactNumber: payload.contactNumber,
+    status: payload.userStatus,
+    email: payload.email,
+    password: hashedPassword,
+    country: payload.country,
+    role: payload.role,
+  };
 
-    if(user?.verifyOtpExpireAt < Date.now())
-         errors.verifyOtpExpireAt = "OTP is expired";
+  const { savedUser } = await saveAuthRepository(registeredUser);
 
-    if (Object.keys(errors).length > 0) {
-        throw new ErrorResponse("User account verification failed", 404, errors);
-      }
+  await transport.sendMail({
+    from: process.env.MAIL_FROM_ADDRESS,
+    to: savedUser.email,
+    subject: "Welcome to LPL",
+    text: `Hello ${savedUser.name}, welcome to Lanka Premier League!`,
+  });
+  return successResponse('User registered successfully', savedUser);
+};
 
-      const userId = await verifyUserAccount(user._id.toString());
+export const logOutUserService = async (req,res) => {
 
-      return { id: userId };
-}
+  res.clearCookie('token', {
+      httpOnly: true,
+      sameSite: 'Lax',
+      secure: false,
+      path: '/',
+    });
 
-export const sendUserPasswordResetOtp = async (passwordResetData) => {
+  return successResponse('User logged out successfully');
+};
 
-    const errors = {};
-    const user = await User.findOne({ email: passwordResetData.email });
+export const sendUserVerifyOtpService = async ({ email }) => {
+  const user = await User.findOne({ email });
+  if (!user) return errorResponse('User not found', { email: 'Email not found' });
 
-    if(!user)
-         errors.user = "User not found";
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    if (Object.keys(errors).length > 0) {
-        throw new ErrorResponse("User password reset code send failed", 404, errors);
-      }
-
-    const resetOtp = String(Math.floor(100000 + Math.random() * 900000));
-    const resetOtpExpireAt = Date.now() + 5 * 60 * 1000;
-
-    const savedUser = await saveResetOtp(user._id.toString(), resetOtp, resetOtpExpireAt);
-  
-    const mailOptions = {
-      from: process.env.MAIL_FROM_ADDRESS,
-      to: user.email,
-      subject: "Password Reset",
-      text: `Hello ${user.name}, your password reset code is ${resetOtp}`,
-    };
-  
-    await transport.sendMail(mailOptions);
-  
-    return { id: savedUser };
-}
-
-export const resetUserPassword = async (passwordResetData) => {
-
-  const errors = {};
-  const user = await User.findOne({ email: passwordResetData.email });
-
-  if(!user)
-       errors.user = "User not found";
-
-  if(user?.resetOtp === "" || user?.resetOtp !== passwordResetData.otp)
-    errors.otp = "OTP is incorrect";
-
-  if(user?.resetOtpExpireAt < Date.now())
-    errors.resetOtpExpireAt = "OTP is expired";
-
-  if (Object.keys(errors).length > 0) {
-      throw new ErrorResponse("User password reset failed", 404, errors);
+    const otpData = {
+      verifyOtp : otp,
+      verifyOtpExpireAt : Date.now() + 10 * 60 * 1000,
+      userId : user._id
     }
 
-  const hashedPassword = await bcrypt.hash(passwordResetData.password, 10);
+    const { saveOtpData } = await otpSaveAuthRepository(otpData);
 
-  const savedUser = await updatePassword(user._id.toString(), hashedPassword);
+  await sendMail({
+    to: saveOtpData.email,
+    subject: 'Your Verification OTP',
+    text: `Your OTP is ${saveOtpData.verifyOtp}`,
+  });
 
-  return { id: savedUser };
-}
+  return successResponse('OTP sent to email');
+};
+
+export const verifyEmailService = async ({ email, otp }) => {
+  const user = await User.findOne({ email });
+  if (!user) return errorResponse('User not found');
+
+  if (user.verifyOtp !== otp || Date.now() > user.verifyOtpExpireAt) {
+    return errorResponse('Invalid or expired OTP', { otp: 'Invalid or expired OTP' });
+  }
+
+  const emailVerifyData = {
+      userId : user._id,
+      isAccountVerified : true,
+      verifyOtp : '',
+      verifyOtpExpireAt : 0
+    }
+
+    const { savedUser } = await verifyEmailAuthRepository(emailVerifyData);
+
+  return successResponse('Email verified successfully', savedUser);
+};
+
+export const sendUserPasswordResetOtpService = async ({ email }) => {
+  const user = await User.findOne({ email });
+  if (!user) return errorResponse('User not found', { email: 'Email not found' });
+
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  user.resetOtp = otp;
+  user.resetOtpExpireAt = Date.now() + 10 * 60 * 1000;
+  await user.save();
+
+  await sendMail({
+    to: user.email,
+    subject: 'Password Reset OTP',
+    text: `Your password reset OTP is ${otp}`,
+  });
+
+  return successResponse('Password reset OTP sent');
+};
+
+export const resetUserPasswordService = async ({ email, otp, newPassword }) => {
+  const user = await findUserByEmail(email);
+  if (!user) return errorResponse('User not found');
+
+  if (user.resetOtp !== otp || Date.now() > user.resetOtpExpireAt) {
+    return errorResponse('Invalid or expired OTP', { otp: 'Invalid or expired OTP' });
+  }
+
+  password = await bcrypt.hash(newPassword, 10);
+
+  const resetData = {
+    password : password,
+    resetOtp : '',
+    resetOtpExpireAt : 0,
+    userId : user._id
+  }
+  const { resetUser } = await resetUserPasswordRepository(resetData);
+
+  return successResponse('Password reset successfully');
+};
