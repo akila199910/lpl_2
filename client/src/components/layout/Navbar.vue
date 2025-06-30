@@ -2,9 +2,15 @@
 import logo from '../../assets/lpl_logo.jpg';
 import { Icon } from '@iconify/vue';
 import { ref } from 'vue';
+import { useAuthStore } from '../../store/auth';
 
 const emit = defineEmits(['toggle-sidebar']);
 const navMenuOpen = ref(false);
+
+const authStore = useAuthStore();
+const handleLogout = () => {
+  authStore.logout();
+};
 </script>
 
 <template>
@@ -23,6 +29,8 @@ const navMenuOpen = ref(false);
         <li class="hover:text-blue-600 cursor-pointer">About</li>
         <li class="hover:text-blue-600 cursor-pointer">Services</li>
         <li class="hover:text-blue-600 cursor-pointer">Contact</li>
+        <li class="hover:text-blue-600 cursor-pointer">Logout</li>
+
       </ul>
 
         <!-- Toggle button (mobile only) -->
@@ -40,6 +48,7 @@ const navMenuOpen = ref(false);
       <li class="hover:text-blue-600 cursor-pointer">About</li>
       <li class="hover:text-blue-600 cursor-pointer">Services</li>
       <li class="hover:text-blue-600 cursor-pointer">Contact</li>
+      <li class="hover:text-blue-600 cursor-pointer" @click="handleLogout"> Logout</li>
     </ul>
   </div>
 </template>
