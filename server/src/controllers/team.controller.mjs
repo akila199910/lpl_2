@@ -1,29 +1,38 @@
-import { getTeamsService, saveTeamService } from "../services/team.service.mjs";
-import { successResponse } from "../utils/apiResponse.mjs";
+import {
+  getTeamsService,
+  createTeamService,
+  saveTeamService,
+  getTeamByIdService,
+  updateTeamService,
+  deleteTeamService,
+} from "../services/team.service.mjs";
 
-export const getTeams = async(req, res, next) => {
-    try {
-        const result = await getTeamsService();
-        res.status(200).json(successResponse("Teams retrieved successfully", result));
-    } catch (error) {
-        next(error);
-    }
+export const getTeamsController = async (req, res) => {
+  const result = await getTeamsService();
+  return res.status(result.success ? 200 : 400).json(result);
 };
 
-export const createTeam = async(req, res, next) => {
-    try {
-        const result = await getTeamsService();
-        res.status(200).json(successResponse("Teams retrieved successfully", result));
-    } catch (error) {
-        next(error);
-    }
-}
+export const createTeamController = async (req, res) => {
+  const result = await createTeamService();
+  return res.status(result.success ? 200 : 400).json(result);
+};
 
-export const saveTeam = async(req, res, next) => {
-    try {
-        const result = await saveTeamService(req.body);
-        res.status(201).json(successResponse("Teams created successfully", result));
-    } catch (error) {
-        next(error);
-    }
+export const saveTeamController = async (req, res) => {
+  const result = await saveTeamService(req.body);
+  return res.status(result.success ? 201 : 400).json(result);
+};
+
+export const getTeamByIdController = async (req, res) => {
+  const result = await getTeamByIdService(req.params.id);
+  return res.status(result.success ? 200 : 400).json(result);
+};
+
+export const updateTeamController = async (req, res) => {
+  const result = await updateTeamService(req.body);
+  return res.status(result.success ? 200 : 400).json(result);
+};
+
+export const deleteTeamController = async (req, res) => {
+  const result = await deleteTeamService(req.params.id);
+  return res.status(result.success ? 200 : 400).json(result);
 };
