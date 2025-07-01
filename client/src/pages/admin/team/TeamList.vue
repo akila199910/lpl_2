@@ -10,13 +10,13 @@ import logo from '../../../assets/download.png'
 
 
 const columns = [
-  { text: 'ID', value: 'id' },
-  { text: 'Name', value: 'name' },
-  { text: 'Owner Name', value: 'owner_id.name' },
-  { text: 'Status', value: 'status' },
   { text: 'Logo', value: 'logo' },
+  { text: 'Name', value: 'name' },
+  { text: 'Owner Name', value: 'ownerName' }, // use the flattened field
+  { text: 'Status', value: 'status' },
   { text: 'Actions', value: 'actions', sortable: false },
 ];
+
 
 const teams = ref([]);
 const loading = ref(true);
@@ -27,22 +27,25 @@ const router = useRouter();
 
 
 
-// Lifecycle hook to fetch data
 onMounted(async () => {
   try {
     const response = await getTeams();
     if (response.data.success === true) {
-      teams.value = response.data.data;
+      const raw = response.data.data;
+
+      teams.value = raw.map(team => ({
+        ...team,
+        id: team._id, // required for action buttons
+        ownerName: team.owner_id?.name || 'N/A', // needed for visible column
+      }));
     }
   } catch (err) {
-    if (err.response?.data?.errors) {
-      errors.value = err.response.data.errors;
-      console.log('Fetch error:', err.response.data.errors);
-    }
+    errors.value = err.response?.data?.errors || {};
   } finally {
     loading.value = false;
   }
 });
+
  
 async function handleView(team) {
  
@@ -111,12 +114,9 @@ function handleDelete(team) {
 
     <div v-if="selectedTeam" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
       <!-- Logo -->
-      <div class="flex items-center gap-4 sm:col-span-2">
+      <div>
+        <p class="text-sm text-gray-500">Team Logo</p>
         <img :src="selectedTeam.logo == 'user.png' ? logo : selectedTeam.logo" alt="Logo" class="w-16 h-16 rounded-full object-cover" />
-        <div>
-          <p class="text-sm text-gray-500">Team ID</p>
-          <p class="text-sm font-medium">{{ selectedTeam.id }}</p>
-        </div>
       </div>
 
       <!-- Team Name -->
