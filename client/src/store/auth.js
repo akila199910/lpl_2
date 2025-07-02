@@ -73,5 +73,49 @@ export const useAuthStore = defineStore('auth', {
                 }
             }
         },
+
+        async register(payload) {
+            this.success = false;
+            this.message = null;
+            this.errors = null;
+
+            try {
+                const response = await authService.register(payload);
+                const res = response.data;
+
+                if (!res.success) {
+
+                    this.success = false;
+                    this.message = res.message;
+                    this.errors = res.errorData;
+                }
+                else{
+                    this.success = true;
+                    this.message = res.message;
+                    this.errors = null;
+                    router.push('/login');
+                }
+
+                return res;
+
+            } catch (error) {
+
+                this.success = false;
+                const res = error.response?.data;
+                
+                if (res?.success === false) {
+
+                this.message = res.message;
+                this.errors = res.errorData;
+
+                } else {
+
+                this.message = 'Something went wrong.';
+                this.errors = { general: res?.message || 'Network error' };
+                }
+
+                return res;
+            }
+        }
     },
 });

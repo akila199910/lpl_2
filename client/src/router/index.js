@@ -1,25 +1,5 @@
-// // router/index.js
-// import { createRouter, createWebHistory } from 'vue-router';
-// import Login from '../pages/auth/Login.vue';
-// import Index from '../pages/dashboard/Index.vue';
-// // import Register from '@/pages/auth/Register.vue';
-
-// const routes = [
-//   { path: '/login', component: Login },
-  
-//   {path: '/dashboard', component: Index},
-  
-// ];
-
-// const router = createRouter({
-//   history: createWebHistory(),
-//   routes,
-// });
-
-// export default router;
+import { useAuthStore } from '../store/auth';
 import { createRouter, createWebHistory } from 'vue-router';
-
-// Import route groups
 import authRoutes from './authRoutes';
 // import userRoutes from './userRoutes';
 import teamRoutes from './teamRoutes';
@@ -33,9 +13,28 @@ const routes = [
   ...teamRoutes,
 ];
 
+
+
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach(async (to, from, next) => {
+  const publicPages = ['/login', '/register'];
+  const isPublic = publicPages.includes(to.path);
+
+  const authStore = useAuthStore();
+
+  if (!authStore.user && !isPublic) {
+    await authStore.checkAuth();
+  }
+
+  if (authStore.user && isPublic) {
+    return next('/dashboard');
+  }
+
+  next();
 });
 
 export default router;

@@ -39,7 +39,7 @@ export const registerUserService = async (payload) => {
     lastName: payload.lastName,
     name: `${payload.firstName} ${payload.lastName}`,
     contactNumber: payload.contactNumber,
-    status: payload.userStatus,
+    status: payload.status,
     email: payload.email,
     password: hashedPassword,
     country: payload.country,
