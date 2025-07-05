@@ -3,7 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import authRoutes from './authRoutes';
 // import userRoutes from './userRoutes';
 import teamRoutes from './teamRoutes';
-import dashboardRoutes from './dashboardRoutes';
+import dashboardRoutes from './dashboardRoutes'
+import playerRoutes from './playerRoutes'
 
 // Combine all route arrays into one
 const routes = [
@@ -11,6 +12,7 @@ const routes = [
   ...dashboardRoutes,
   // ...userRoutes,
   ...teamRoutes,
+  ...playerRoutes
 ];
 
 
