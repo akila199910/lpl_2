@@ -7,6 +7,7 @@ import { errorHandlerMiddleware } from "./src/middlewares/errorHandlerMiddleware
 import authRouter from "./src/routes/auth.router.mjs";
 import userRouter from "./src/routes/user.route.mjs";
 import teamRouter from "./src/routes/team.route.mjs";
+import playerRouter from "./src/routes/player.route.mjs";
 
 
 
@@ -22,6 +23,7 @@ server.use(express.json());
 server.use("/auth", authRouter);
 server.use("/users", userRouter);
 server.use("/teams", teamRouter);
+server.use("/players", playerRouter);
 
 server.use(errorHandlerMiddleware);
 
