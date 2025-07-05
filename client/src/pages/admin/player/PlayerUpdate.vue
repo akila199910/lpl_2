@@ -2,10 +2,12 @@
 import { onMounted, ref } from 'vue'
 import DashboardLayout from '../../../layouts/DashboardLayout.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getPlayerById } from '../../../services/playerService';
+import { createPlayer, getPlayerById } from '../../../services/playerService';
 import defaultProfile from '../../../assets/defualtUser.jpeg';
 import userIcon from '../../../assets/icons/user.svg';
 import Batting from './Batting.vue'
+import Bowling from './Bowling.vue'
+import Other from './Other.vue'
 // import { createTeam } from '../../../services/teamService.mjs'
 
 
@@ -72,13 +74,58 @@ onMounted(async()=>{
         profile: data.profile?.profileImageUrl,
         age : 25
        }
-
+      playerData.value.user_id = userId;
+      playerData.value.role = data.role;
     }  
-    console.log(userData);
+    console.log(userData.value.role);
   } catch (error) {
     
   }
 })
+
+const playerData = ref({
+  batting_style: '',
+  batting_average: '',
+  batting_strike_rate: '',
+  batting_runs: '',
+  number_of_hundreds: '',
+  number_of_fifties: '',
+  batting_high_score: '',
+
+  bowling_style: '',
+  bowling_average: '',
+  bowling_strike_rate: '',
+  bowling_wickets: '',
+  bowling_economy: '',
+
+  number_of_catches: '',
+  number_of_stumpings: '',
+  number_of_matches: '',
+  number_of_innings: '',
+  player_status: 1,
+  status: 1
+});
+ const handleUpdate = async () => {
+   try {
+    const payload = { ...playerData.value }
+
+    const response = await createPlayer(payload)
+
+    if(response.data.success === false) {
+      errors.value = response.data.errors
+    }else{
+      console.log(response);
+      // router.push('/players')
+    }
+    successMessage.value = 'Player successfully updated!'
+  } catch (err) {
+    if (err.response?.data?.errors) {
+      errors.value = err.response.data.errors
+    }
+  } finally {
+    loading.value = false
+  }
+ }
 
 </script>
 
@@ -132,17 +179,21 @@ onMounted(async()=>{
         </div>
         <hr>
         
-        <div class="mt-4">
-          <Batting/>
+        <div class="mt-4" v-if="userData.role !== 'Bowler' ">
+          <Batting :data="playerData"/>
         </div>
+        <div class="mt-4"  v-if="userData.role !== 'Batsman' && userData.role !== 'WicketKeeper' ">
+          <Bowling :data="playerData"/>
+        </div>
+
         <div class="mt-4">
-          <Batting/>
+          <Other :data="playerData"/>
         </div>
         
 
         <div class=" flex flex-col gap-2 sm:flex-row sm:justify-between">
           <button class=" bg-red-300 rounded-sm py-2 max-w-40 sm:px-6">Back</button>
-          <button class=" bg-green-300 rounded-sm py-2 max-w-40 sm:px-6">Approved</button>
+          <button class=" bg-green-300 rounded-sm py-2 max-w-40 sm:px-6" @click="handleUpdate">Approved</button>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 
 import User from "../models/user.model.mjs";
+import Player from "../models/player.model.mjs";
 
 export const getPlayerRepository = async () => {
   return await User.find({
@@ -10,25 +11,19 @@ export const getPlayerRepository = async () => {
 
 export const getPlayerByIdRepository = async (id) => {
    const user = await User.findById(id).populate("profile");
-   console.log(user)
    return user;
 };
 
-// export const savePlayerRepository = async (teamOwner, teamData) => {
-//   const user = new User(teamOwner);
-//   const savedUser = await user.save();
+export const savePlayerRepository = async (playerData) => {
 
-//   const userProfile = new userProfileModel({
-//     user: savedUser._id,
-//     profileImageUrl: "user.png",
-//   });
-//   await userProfile.save();
+  const player = await Player.create(playerData);
+  const user = await User.findById(playerData.user_id);
+        user.status = 1;
+        await user.save();
 
-//   const team = new Team({ ...teamData, owner_id: savedUser._id });
-//   const savedTeam = await team.save();
 
-//   return { savedTeam, savedUser };
-// };
+  return { player, user };
+};
 
 // export const updateTeamRepository = async (teamOwner, teamData) => {
 //   const updatedUser = await User.findByIdAndUpdate(

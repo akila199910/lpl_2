@@ -1,5 +1,5 @@
 
-import { getPlayerByIdRepository, getPlayerRepository } from "../repositories/player.repository.mjs";
+import { getPlayerByIdRepository, getPlayerRepository, savePlayerRepository } from "../repositories/player.repository.mjs";
 import { successResponse, errorResponse } from "../utils/apiResponse.mjs";
 import bcrypt from "bcryptjs";
 
@@ -13,44 +13,20 @@ export const getPlayersService = async () => {
 //   return successResponse("Render team create form");
 // };
 
-// export const savePlayerService = async (teamData) => {
-//   const errors = {};
-//   if (await User.findOne({ email: teamData.email })) errors.email = "Email already exists";
-//   if (await User.findOne({ contactNumber: teamData.contactNumber })) errors.contactNumber = "Contact number already exists";
-//   if (await Team.findOne({ name: teamData.name })) errors.teamName = "Team name already exists";
-//   if (Object.keys(errors).length > 0) return errorResponse("Validation failed", errors);
+export const savePlayerService = async (playerData) => {
 
-//   const hashedPassword = await bcrypt.hash("Team@1234", 10);
 
-//   const teamOwner = {
-//     firstName: teamData.firstName,
-//     lastName: teamData.lastName,
-//     name: `${teamData.firstName} ${teamData.lastName}`,
-//     contactNumber: teamData.contactNumber,
-//     status: teamData.userStatus,
-//     email: teamData.email,
-//     password: hashedPassword,
-//     country: teamData.country,
-//     role: teamData.role,
-//   };
+  const { player, user } = await savePlayerRepository(playerData);
 
-//   const team = {
-//     name: teamData.name,
-//     status: teamData.teamStatus,
-//     logo: "user.png",
-//   };
+  // await transport.sendMail({
+  //   from: process.env.MAIL_FROM_ADDRESS,
+  //   to: user.email,
+  //   subject: "Approval Request",
+  //   text: `Hello ${user.name}, Your player request has been approved!`,
+  // });
 
-//   const { savedTeam, savedUser } = await savePlayerRepository(teamOwner, team);
-
-//   await transport.sendMail({
-//     from: process.env.MAIL_FROM_ADDRESS,
-//     to: savedUser.email,
-//     subject: "Welcome to LPL",
-//     text: `Hello ${savedUser.name}, welcome to Lanka Premier League!`,
-//   });
-
-//   return successResponse("Team created successfully", savedTeam);
-// };
+  return successResponse("Player created successfully",player);
+};
 
 export const getPlayerByIdService = async (id) => {
   const player = await getPlayerByIdRepository(id);

@@ -21,7 +21,7 @@ const playerSchema = new mongoose.Schema({
 
     bowling_style: { 
         type: Number, 
-        enum: [0, 1,2,3,4,5,6,7,8,9], // 0 = Right-arm fast, 1 = Right-arm medium, 2 = Right-arm off break, 3 = Left-arm fast, 4 = Left-arm medium, 5 = Left-arm off break , 6 = Leg break, 7 = Arm break , 8 = Head break, 9 = Other
+        enum: [0,1,2,3,4,5,6,7,8,9], 
         required: false 
         },
 
@@ -35,12 +35,11 @@ const playerSchema = new mongoose.Schema({
     bowling_economy: { type: Number, required: false , default: null},
     number_of_matches: { type: Number, required: false , default: null},
     number_of_innings: { type: Number, required: false , default: null},
-    number_of_runs: { type: Number, required: false , default: null},   
     number_of_hundreds: { type: Number, required: false , default: null},
     number_of_fifties: { type: Number, required: false , default: null},
     number_of_catches: { type: Number, required: false , default: null},
     number_of_stumpings: { type: Number, required: false , default: null},
-    status: { type: Number, required: true, enum: [0,1,2,3,4,5,6] },
+    status: { type: Number, required: true, enum: [1,2,3,4,5,6] },
 });
 
 playerSchema.set('toObject', { virtuals: true });

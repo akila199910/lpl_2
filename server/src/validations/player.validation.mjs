@@ -1,11 +1,6 @@
 import { body } from 'express-validator';
 
 
-// export const getPlayerIdValidation = [
-//     body('id').notEmpty().withMessage('Player id is required'),
-// ];
-
-
 export const playerCreateValidation = [
   body('user_id')
     .notEmpty()
@@ -64,20 +59,24 @@ export const playerCreateValidation = [
     .notEmpty()
     .withMessage('Bowling economy is required'),
 
+  body('number_of_hundreds')
+      .if((value, { req }) => ['Batsman', 'AllRounder'].includes(req.body.role))
+      .notEmpty()
+      .withMessage('Number of hundreds is required'),
+
+  body('number_of_fifties')
+  .if((value, { req }) => ['Batsman', 'AllRounder'].includes(req.body.role))
+  .notEmpty().withMessage('Number of fifties is required'),
+
   // Common fields
   body('number_of_matches').notEmpty().withMessage('Number of matches is required'),
   body('number_of_innings').notEmpty().withMessage('Number of innings is required'),
-  body('number_of_runs').notEmpty().withMessage('Number of runs is required'),
-  body('number_of_fours').notEmpty().withMessage('Number of fours is required'),
-  body('number_of_sixes').notEmpty().withMessage('Number of sixes is required'),
-  body('number_of_hundreds').notEmpty().withMessage('Number of hundreds is required'),
-  body('number_of_fifties').notEmpty().withMessage('Number of fifties is required'),
   body('number_of_catches').notEmpty().withMessage('Number of catches is required'),
   body('number_of_stumpings').notEmpty().withMessage('Number of stumpings is required'),
 
   body('status')
     .notEmpty()
     .withMessage('Status is required')
-    .isIn([0, 1, 2, 3, 4, 5, 6])
+    .isIn([ 1, 2, 3, 4, 5, 6])
     .withMessage('Invalid status'),
 ];

@@ -1,65 +1,69 @@
-<script>
+<script setup>
+
+const playerProps = defineProps({
+     data: Object
+}) 
 
 </script>
 
+
 <template>
-        <div class=" items-center justify-center p-2 shadow my-4 mx-auto rounded-2xl ">
-            <p class="text-2xl text-center mb-5 font-semibold">Batting Details</p>
-        
-        <div class=" grid grid-cols-1 justify-center sm:grid-cols-2 items-center gap-x-6 ">
+  <div class="p-4 shadow-md my-6 mx-auto rounded-2xl max-w-5xl bg-white">
+    <p class="text-2xl text-center mb-6 font-semibold uppercase">Batting Details</p>
 
-            <div class="mb-5  max-w-40 sm:max-w-full">
-                <div class=" flex flex-col gap-2">
-                    <label for="">Batting Style</label>
-                    <select name="" id="" class=" border border-black py-2 pl-2 rounded-sm">
-                        <option value="" selected disabled> Batting Style</option>
-                        <option value="">Righ Hand</option>
-                        <option value="">Left Hand</option>
-                    </select>
-                </div>
-            </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <!-- Batting Style -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Batting Style</label>
+        <select class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            v-model="playerProps.data.batting_style">
+          <option value="" disabled selected>Select Batting Style</option>
+          <option value="1">Right Hand</option>
+          <option value="0">Left Hand</option>
+        </select>
+      </div>
 
-            <div class="mb-5  max-w-40 sm:max-w-full">
-                <div class=" flex flex-col gap-2">
-                  <label for="">Batting Average</label>
-                  <input type="text" class=" border border-black rounded-sm py-2 pl-2 ">
-                </div>
-            </div>
+      <!-- Batting Average -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Batting Average</label>
+        <input type="number" class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            v-model="playerProps.data.batting_average">
+      </div>
 
-            <div class="mb-5 max-w-40 sm:max-w-full">
-                <div class=" flex flex-col gap-2">
-                  <label for="">Batting Strike Rate</label>
-                  <input type="text" class=" border border-black rounded-sm py-2 pl-2">
-                </div>
-            </div>
+      <!-- Batting Strike Rate -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Batting Strike Rate</label>
+        <input type="number" class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            v-model="playerProps.data.batting_strike_rate">
+      </div>
 
-            <div class="mb-5 max-w-40 sm:max-w-full">
-                <div class=" flex flex-col gap-2">
-                  <label for="">Runs</label>
-                  <input type="text" class=" border border-black rounded-sm py-2 pl-2">
-                </div>
-            </div>
+      <!-- Runs -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Runs</label>
+        <input type="number" class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            v-model="playerProps.data.batting_runs">
+      </div>
 
-            <div class="mb-5 max-w-40 sm:max-w-full">
-                <div class=" flex flex-col gap-2">
-                  <label for=""> Hundreds</label>
-                  <input type="text" class=" border border-black rounded-sm py-2 pl-2">
-                </div>
-            </div>
+      <!-- Hundreds -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Hundreds</label>
+        <input type="number" class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            v-model="playerProps.data.number_of_hundreds">
+      </div>
 
-            <div class="mb-5 max-w-40 sm:max-w-full">
-                <div class=" flex flex-col gap-2">
-                  <label for=""> Fifties</label>
-                  <input type="text" class=" border border-black rounded-sm py-2 pl-2">
-                </div>
-            </div>
+      <!-- Fifties -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Fifties</label>
+        <input type="number" class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            v-model="playerProps.data.number_of_fifties">
+      </div>
 
-            <div class="mb-5 max-w-40 sm:max-w-full">
-                <div class=" flex flex-col gap-2">
-                  <label for=""> High Score</label>
-                  <input type="text" class=" border border-black rounded-sm py-2 pl-2">
-                </div>
-            </div>
-</div>
- </div>
+      <!-- High Score -->
+      <div>
+        <label class="block text-sm font-medium mb-1">High Score</label>
+        <input type="number" class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            v-model="playerProps.data.batting_high_score">
+      </div>
+    </div>
+  </div>
 </template>
