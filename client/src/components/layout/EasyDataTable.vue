@@ -34,39 +34,39 @@ const emit = defineEmits(['view', 'edit', 'delete']);
         border-cell
     >
      <!-- Logo -->
-<template #item-logo="{ logo }">
-  <img
-    :src="logo === 'user.png' ? defaultLogo : item?.logo"
-    alt="Logo"
-    class="w-10 h-10 rounded-full object-cover mx-auto"
-  />
-</template>
+      <template #item-logo="{ logo }">
+        <img
+          :src="logo === 'user.png' ? defaultLogo : item?.logo"
+          alt="Logo"
+          class="w-10 h-10 rounded-full object-cover mx-auto"
+        />
+      </template>
 
 
-<template #item-status="{ status }">
-  <span
-    
-    :class="status == 1 ? 'bg-green-500' : 'bg-red-500'"
-    class="px-2 py-1 rounded-full text-white text-xs font-semibold"
-  >
-    {{ status == 1 ? 'Active' : 'Inactive' }}
-  </span>
-</template>
+    <template #item-status="{ status }">
+      <span
+        
+        :class="status == 1 ? 'bg-green-500' : 'bg-red-500'"
+        class="px-2 py-1 rounded-full text-white text-xs font-semibold"
+      >
+        {{ status == 1 ? 'Active' : 'Inactive' }}
+      </span>
+    </template>
 
 
-<template #item-actions="{ id }">
-  <div class="flex items-center gap-2 justify-center">
-    <button @click="$emit('view', id)" title="View">
-      <Icon icon="mdi:eye" class="w-5 h-5 text-blue-500 hover:text-blue-700" />
-    </button>
-    <button @click="$emit('edit', id)" title="Edit">
-      <Icon icon="mdi:pencil" class="w-5 h-5 text-green-500 hover:text-green-700" />
-    </button>
-    <button @click="$emit('delete', id)" title="Delete">
-      <Icon icon="mdi:delete" class="w-5 h-5 text-red-500 hover:text-red-700" />
-    </button>
-  </div>
-</template>
+    <template #item-actions="{ id }">
+      <div class="flex items-center gap-2 justify-center">
+        <button @click="$emit('view', id)" title="View">
+          <Icon icon="mdi:eye" class="w-5 h-5 text-blue-500 hover:text-blue-700" />
+        </button>
+        <button @click="$emit('edit', id)" title="Edit">
+          <Icon icon="mdi:pencil" class="w-5 h-5 text-green-500 hover:text-green-700" />
+        </button>
+        <button @click="$emit('delete', id)" title="Delete">
+          <Icon icon="mdi:delete" class="w-5 h-5 text-red-500 hover:text-red-700" />
+        </button>
+      </div>
+    </template>
 
 
     </EasyDataTable>
