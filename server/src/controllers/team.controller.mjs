@@ -27,6 +27,7 @@ export const getTeamByIdController = async (req, res) => {
   return res.status(result.success ? 200 : 400).json(result);
 };
 
+
 export const updateTeamController = async (req, res) => {
   const result = await updateTeamService(req.body);
   return res.status(result.success ? 200 : 400).json(result);
