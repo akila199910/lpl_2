@@ -1,8 +1,6 @@
-
-import { getPlayerByIdRepository, getPlayerRepository, savePlayerRepository } from "../repositories/player.repository.mjs";
+import { getPlayerByIdRepository, getPlayerRepository, savePlayerRepository, updatePlayerRepository } from "../repositories/player.repository.mjs";
 import { successResponse, errorResponse } from "../utils/apiResponse.mjs";
-import bcrypt from "bcryptjs";
-
+import Player from "../models/player.model.mjs";
 
 export const getPlayersService = async () => {
   const players = await getPlayerRepository();
@@ -15,18 +13,28 @@ export const getPlayersService = async () => {
 
 export const savePlayerService = async (playerData) => {
 
+  const existingPlayer = await Player.findOne({ user_id: playerData.user_id });
 
-  const { player, user } = await savePlayerRepository(playerData);
+  let player, user;
 
-  // await transport.sendMail({
-  //   from: process.env.MAIL_FROM_ADDRESS,
-  //   to: user.email,
-  //   subject: "Approval Request",
-  //   text: `Hello ${user.name}, Your player request has been approved!`,
-  // });
+  if (existingPlayer) {
+    ({ player, user } = await updatePlayerRepository(existingPlayer._id, playerData));
 
-  return successResponse("Player created successfully",player);
+  } 
+  else {
+    ({ player, user } = await savePlayerRepository(playerData)
+      // await transport.sendMail({
+      //   from: process.env.MAIL_FROM_ADDRESS,
+      //   to: user.email,
+      //   subject: "Approval Request",
+      //   text: `Hello ${user.name}, Your player request has been approved!`,
+      // });
+    );
+  }
+
+  return successResponse("Player saved successfully", player);
 };
+
 
 export const getPlayerByIdService = async (id) => {
   const player = await getPlayerByIdRepository(id);

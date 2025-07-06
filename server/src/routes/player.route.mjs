@@ -12,7 +12,5 @@ playerRouter.get('/', authMiddleware, getPlayersController );
 playerRouter.get('/:id', authMiddleware, getPlayerByIdController );
 playerRouter.post('/', authMiddleware, playerCreateValidation, handleValidationErrors('Player create validation failed'), savePlayerController );
 
-// playerRouter.post('/:id', playerCreateValidation, handleValidationErrors('Player validation failed'), createPlayerController );
-
 
 export default playerRouter;

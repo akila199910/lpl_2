@@ -55,8 +55,8 @@ onMounted(async () => {
   try {
     const response = await getPlayers();
     if (response.data.success === true) {
+
       const raw = response.data.data;
-      console.log(raw);
       players.value = raw.map((player) => ({
         id: player._id,
         name: player.name,
@@ -65,6 +65,7 @@ onMounted(async () => {
         status: player.status,
         profile: player.profile?.profileImageUrl || 'user.png',
       }));
+      
     }
   } catch (err) {
     errors.value = err.response?.data?.errors || {};
@@ -77,7 +78,6 @@ const handleView = (id) => {
   console.log(id);
 };
 const handleEdita = (id) => {
-  console.log("Player")
   router.push(`/player/${id}`);
 };
 const handleDelete = (id) => {
@@ -87,13 +87,14 @@ const handleDelete = (id) => {
 
 <template>
   <DashboardLayout>
-    <div class="w-full px-4 sm:px-6 lg:px-8 py-4">
-      <TableHeader
-        title="Players Overview"
-        buttonText="Add New Team"
-        buttonLink="/teams/create"
-        @addNew="$router.push('/teams/create')"
-      />
+
+      <div class="w-full px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <h1 class="text-xl sm:text-2xl font-semibold text-gray-800">
+          Players Overview
+          </h1>
+          
+      </div>
 
       <div class="bg-white rounded-lg shadow-md p-4">
         <EasyDataTable
@@ -124,7 +125,7 @@ const handleDelete = (id) => {
             </span>
           </template>
 
-          <template #item-actions="{ id,role }">
+          <template #item-actions="{ id }">
             <div class="flex items-center gap-2 justify-center">
               <button @click="handleView(id)" title="View">
                 <Icon icon="mdi:eye" class="w-5 h-5 text-blue-500 hover:text-blue-700" />
