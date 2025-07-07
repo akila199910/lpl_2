@@ -1,7 +1,8 @@
 <script setup>
 
 const playerProps = defineProps({
-     data: Object
+     data: Object,
+     errors: Object
 }) 
 
 </script>
@@ -28,6 +29,7 @@ const playerProps = defineProps({
           <option value="7">Arm Break</option>
           <option value="8">Other</option>
         </select>
+        <span class="text-red-500" v-if="playerProps.errors?.bowling_style"> {{ playerProps.errors?.bowling_style }}</span>
       </div>
 
       <!-- Bowling Average -->
@@ -38,8 +40,8 @@ const playerProps = defineProps({
           class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           v-model="playerProps.data.bowling_average"
         />
+        <span class="text-red-500" v-if="playerProps.errors?.bowling_average"> {{ playerProps.errors?.bowling_average }}</span>
       </div>
-
       <!-- Bowling Strike Rate -->
       <div>
         <label class="block text-sm font-medium mb-1">Bowling Strike Rate</label>
@@ -48,6 +50,7 @@ const playerProps = defineProps({
           class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           v-model="playerProps.data.bowling_strike_rate"
         />
+        <span class=" text-red-500" v-if="playerProps.errors?.bowling_strike_rate"> {{ playerProps.errors?.bowling_strike_rate }}</span>
       </div>
 
       <!-- Wickets -->
@@ -58,6 +61,7 @@ const playerProps = defineProps({
           class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           v-model="playerProps.data.bowling_wickets"
         />
+        <span class=" text-red-500" v-if="playerProps.errors?.bowling_wickets">{{ playerProps.errors.bowling_wickets }}</span>
       </div>
 
       <!-- Bowling Economy -->
@@ -68,6 +72,7 @@ const playerProps = defineProps({
           class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           v-model="playerProps.data.bowling_economy"
         />
+        <span class=" text-red-500" v-if="playerProps.errors?.bowling_economy">{{ playerProps.errors.bowling_economy }}</span>
       </div>
     </div>
   </div>

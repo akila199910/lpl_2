@@ -1,7 +1,8 @@
 <script setup>
 
 const playerProps = defineProps({
-     data: Object
+     data: Object,
+     errors: Object
 }) 
 
 </script>
@@ -18,7 +19,8 @@ const playerProps = defineProps({
           type="number"
           class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           v-model="playerProps.data.number_of_catches"
-        />
+        />       
+        <span class="text-red-500" v-if="playerProps.errors?.number_of_catches"> {{ playerProps.errors?.number_of_catches }}</span>
       </div>
 
       <!-- Stumpings -->
@@ -29,6 +31,7 @@ const playerProps = defineProps({
           class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           v-model="playerProps.data.number_of_stumpings"
         />
+        <span class="text-red-500" v-if="playerProps.errors?.number_of_stumpings"> {{ playerProps.errors?.number_of_stumpings }}</span>
       </div>
 
       <!-- Matches -->
@@ -39,6 +42,7 @@ const playerProps = defineProps({
           class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           v-model="playerProps.data.number_of_matches"
         />
+        <span class="text-red-500" v-if="playerProps.errors?.number_of_matches"> {{ playerProps.errors?.number_of_matches }}</span>
       </div>
 
       <!-- Innings -->
@@ -49,6 +53,7 @@ const playerProps = defineProps({
           class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           v-model="playerProps.data.number_of_innings"
         />
+        <span class="text-red-500" v-if="playerProps.errors?.number_of_innings"> {{ playerProps.errors?.number_of_innings }}</span>   
       </div>
     </div>
   </div>

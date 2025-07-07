@@ -32,7 +32,7 @@ export const savePlayerService = async (playerData) => {
     );
   }
 
-  return successResponse("Player saved successfully", player);
+  return successResponse("Player updated successfully", player);
 };
 
 

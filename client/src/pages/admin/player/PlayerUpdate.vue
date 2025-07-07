@@ -48,7 +48,9 @@ const playerData = ref({
   number_of_innings: '',
 
   player_status: 1,
-  status: 1
+  status: 1,
+  user_id: '',
+  role: ''
 });
 
 const errors = ref({});
@@ -56,6 +58,7 @@ const message = ref('');
 const loading = ref(false);
 const showConfirmModal = ref(false);
 const successPopup = ref(false);
+const msg = ref('');
 
 const statusLabel = (status) => {
   const labels = ['Pending', 'Approved', 'Rejected', 'Sold', 'Unsold', 'Contracted', 'Archived'];
@@ -147,15 +150,26 @@ const handleUpdate = async () => {
     }
 
   } catch (err) {
-    console.error(err);
-    if (err.response?.data?.errors) {
-      errors.value = err.response.data.errors;
-    }
+
+    if(err.response?.data?.errors) {
+        errors.value = err.response.data.errors;
+      }
+
   } finally {
     loading.value = false;
   }
 };
 
+const handleApproveButton = () => {
+  errors.value = {};
+  msg.value = 'Do you want to approve this player?';
+  showConfirmModal.value = true;
+}
+const handleUpdateButton = () => {
+  errors.value = {};
+  msg.value = 'Do you want to update this player?';
+  showConfirmModal.value = true;
+}
 const confirmUpdate = async () => {
   showConfirmModal.value = false;
   await handleUpdate();
@@ -214,29 +228,32 @@ const confirmUpdate = async () => {
         <hr>
         
         <div class="mt-4" v-if="userData.role !== 'Bowler' ">
-          <Batting :data="playerData"/>
+          <Batting :data="playerData" :errors="errors"/>
         </div>
         <div class="mt-4"  v-if="userData.role !== 'Batsman' && userData.role !== 'WicketKeeper' ">
-          <Bowling :data="playerData"/>
+          <Bowling :data="playerData" :errors="errors"/>
         </div>
 
         <div class="mt-4">
-          <Other :data="playerData"/>
+          <Other :data="playerData" :errors="errors"/>
         </div>
         
 
         <div class=" flex flex-col gap-2 sm:flex-row sm:justify-between">
 
             <button class=" bg-red-300 rounded-sm py-2 max-w-40 sm:px-6" @click="$router.back()">Back</button>
-            <button class="bg-green-300 rounded-sm py-2 max-w-40 sm:px-6" @click="showConfirmModal = true">
+            <button class="bg-green-300 rounded-sm py-2 max-w-40 sm:px-6" v-if="userData.status == 0" @click="handleApproveButton">
               Approved
+            </button>
+            <button class="bg-green-500 rounded-sm py-2 max-w-40 sm:px-6" v-if="userData.status == 1" @click="handleUpdateButton">
+              Update
             </button>
         </div>
       </div>
     </div>
     <ConfirmModal
           :visible="showConfirmModal"
-          msg="Do you want to approve this player?"
+          :msg="msg"
           @confirm="confirmUpdate"
           @cancel="showConfirmModal = false"
         />

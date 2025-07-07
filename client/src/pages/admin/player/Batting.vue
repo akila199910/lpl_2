@@ -1,7 +1,8 @@
 <script setup>
 
 const playerProps = defineProps({
-     data: Object
+     data: Object,
+     errors: Object
 }) 
 
 </script>
@@ -21,6 +22,7 @@ const playerProps = defineProps({
           <option value="1">Right Hand</option>
           <option value="0">Left Hand</option>
         </select>
+        <span class="text-red-500" v-if="playerProps.errors?.batting_style"> {{ playerProps.errors?.batting_style }}</span>
       </div>
 
       <!-- Batting Average -->
@@ -28,6 +30,7 @@ const playerProps = defineProps({
         <label class="block text-sm font-medium mb-1">Batting Average</label>
         <input type="number" class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             v-model="playerProps.data.batting_average">
+        <span class="text-red-500" v-if="playerProps.errors?.batting_average"> {{ playerProps.errors?.batting_average }}</span>
       </div>
 
       <!-- Batting Strike Rate -->
@@ -35,6 +38,7 @@ const playerProps = defineProps({
         <label class="block text-sm font-medium mb-1">Batting Strike Rate</label>
         <input type="number" class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             v-model="playerProps.data.batting_strike_rate">
+        <span class="text-red-500" v-if="playerProps.errors?.batting_strike_rate"> {{ playerProps.errors?.batting_strike_rate }}</span>
       </div>
 
       <!-- Runs -->
@@ -42,6 +46,7 @@ const playerProps = defineProps({
         <label class="block text-sm font-medium mb-1">Runs</label>
         <input type="number" class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             v-model="playerProps.data.batting_runs">
+        <span class="text-red-500" v-if="playerProps.errors?.batting_runs"> {{ playerProps.errors?.batting_runs }}</span>
       </div>
 
       <!-- Hundreds -->
@@ -49,6 +54,7 @@ const playerProps = defineProps({
         <label class="block text-sm font-medium mb-1">Hundreds</label>
         <input type="number" class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             v-model="playerProps.data.number_of_hundreds">
+        <span class="text-red-500" v-if="playerProps.errors?.number_of_hundreds"> {{ playerProps.errors?.number_of_hundreds }}</span>    
       </div>
 
       <!-- Fifties -->
@@ -56,6 +62,7 @@ const playerProps = defineProps({
         <label class="block text-sm font-medium mb-1">Fifties</label>
         <input type="number" class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             v-model="playerProps.data.number_of_fifties">
+        <span class="text-red-500" v-if="playerProps.errors?.number_of_fifties"> {{ playerProps.errors?.number_of_fifties }}</span>
       </div>
 
       <!-- High Score -->
@@ -63,6 +70,7 @@ const playerProps = defineProps({
         <label class="block text-sm font-medium mb-1">High Score</label>
         <input type="number" class="w-full border border-gray-300 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             v-model="playerProps.data.batting_high_score">
+        <span class="text-red-500" v-if="playerProps.errors?.batting_high_score"> {{ playerProps.errors?.batting_high_score }}</span>
       </div>
     </div>
   </div>
