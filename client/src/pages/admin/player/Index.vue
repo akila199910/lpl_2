@@ -4,9 +4,10 @@ import 'vue3-easy-data-table/dist/style.css';
 import { ref, onMounted } from 'vue';
 import DashboardLayout from '../../../layouts/DashboardLayout.vue';
 import { useRouter } from 'vue-router';
-import logo from '../../../assets/defualtUser.jpeg';
+import defualtUser from '../../../assets/defualtUser.jpeg';
 import { getPlayers } from '../../../services/playerService';
 import TableHeader from '../../../components/ui/TableHeader.vue';
+import moveIcon from '../../../assets/icons/move.svg';
 
 const columns = [
   { text: 'Profile', value: 'profile' },
@@ -57,13 +58,14 @@ onMounted(async () => {
     if (response.data.success === true) {
 
       const raw = response.data.data;
+      console.log(raw)
       players.value = raw.map((player) => ({
         id: player._id,
-        name: player.name,
-        country: player.country,
-        role: player.role,
+        name: player.user_id.name,
+        country: player.user_id.country,
+        role: player.user_id.role,
         status: player.status,
-        profile: player.profile?.profileImageUrl || 'user.png',
+        profile: player.user_id.profile?.profileImageUrl || 'user.png',
       }));
       
     }
@@ -78,6 +80,7 @@ const handleView = (id) => {
   console.log(id);
 };
 const handleEdita = (id) => {
+
   router.push(`/player/${id}`);
 };
 const handleDelete = (id) => {
@@ -108,7 +111,7 @@ const handleDelete = (id) => {
         >
           <template #item-profile="{ profile }">
             <img
-              :src="profile === 'user.png' ? logo : profile"
+              :src="profile === 'user.png' ? defualtUser : profile"
               alt="Profile"
               class="w-10 h-10 rounded-full object-cover mx-auto"
             />
@@ -143,7 +146,7 @@ const handleDelete = (id) => {
       </div>
     </div>
 
-    <!-- View Team Modal -->
+    <!-- View Player Modal -->
     <div
       v-if="showModal"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 px-4"
@@ -158,26 +161,21 @@ const handleDelete = (id) => {
         </button>
 
         <!-- Modal Content -->
-        <h2 class="text-2xl font-bold mb-6 text-center">Team Details</h2>
+        <h2 class="text-2xl font-bold mb-6 text-center">Player Details</h2>
 
-        <div v-if="selectedTeam" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+        <div v-if="selectedPlayer" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
           <div>
-            <p class="text-sm text-gray-500">Team Logo</p>
+            <p class="text-sm text-gray-500">Profile</p>
             <img
-              :src="selectedTeam.logo === 'user.png' ? logo : selectedTeam.logo"
+              :src="selectedPlayer.profile === 'user.png' ? defualtUser : selectedPlayer.profile"
               alt="Logo"
               class="w-16 h-16 rounded-full object-cover"
             />
           </div>
 
           <div>
-            <p class="text-sm text-gray-500">Team Name</p>
-            <p class="text-base font-semibold break-words">{{ selectedTeam.name }}</p>
-          </div>
-
-          <div>
-            <p class="text-sm text-gray-500">Owner Name</p>
-            <p class="text-base font-semibold break-words">{{ selectedTeam.owner_id?.name }}</p>
+            <p class="text-sm text-gray-500">Name</p>
+            <p class="text-base font-semibold break-words">{{ selectedPlayer.name }}</p>
           </div>
 
           <div>

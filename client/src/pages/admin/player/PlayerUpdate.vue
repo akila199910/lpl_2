@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 import DashboardLayout from '../../../layouts/DashboardLayout.vue';
-import { createPlayer, getPlayerById } from '../../../services/playerService';
+import { updatePlayer, getPlayerById } from '../../../services/playerService';
 import defaultProfile from '../../../assets/defualtUser.jpeg';
 import userIcon from '../../../assets/icons/user.svg';
 
@@ -14,18 +14,16 @@ import ConfirmModal from '../../../components/ui/ConfirmModal.vue';
 import SuccessPopup from '../../../components/ui/SuccessPopup.vue';
 
 const route = useRoute();
-const userId = route.params.id;
+const playerId = route.params.id;
+console.log("lceuwtygeude")
+console.log(playerId);
 
-const userData = ref({
-  name: '',
-  email: '',
-  contactNumber: '',
-  country: '',
-  role: '',
-  profile: '',
-  age: 25,
-  status: 0
-});
+const errors = ref({});
+const message = ref('');
+const loading = ref(false);
+const showConfirmModal = ref(false);
+const successPopup = ref(false);
+const msg = ref('');
 
 const playerData = ref({
   batting_style: '',
@@ -46,19 +44,20 @@ const playerData = ref({
   number_of_stumpings: '',
   number_of_matches: '',
   number_of_innings: '',
-
-  player_status: 1,
   status: 1,
-  user_id: '',
-  role: ''
+  playerId: playerId,
 });
 
-const errors = ref({});
-const message = ref('');
-const loading = ref(false);
-const showConfirmModal = ref(false);
-const successPopup = ref(false);
-const msg = ref('');
+const userData = ref({
+  name: '',
+  email: '',
+  contactNumber: '',
+  country: '',
+  role: '',
+  status: '',
+  profile: '',
+  age: '',
+});
 
 const statusLabel = (status) => {
   const labels = ['Pending', 'Approved', 'Rejected', 'Sold', 'Unsold', 'Contracted', 'Archived'];
@@ -80,12 +79,11 @@ const statusColor = (status) => {
 
 onMounted(async () => {
   try {
-    const res = await getPlayerById(userId);
+    const res = await getPlayerById(playerId);
     if (!res.data.success) return;
 
     const player = res.data.data;
-    const user = player.user_id || player;
-    const profile = user.profile || {};
+    const user = player.user_id ;
 
     userData.value = {
       name: user.name,
@@ -94,43 +92,33 @@ onMounted(async () => {
       country: user.country,
       role: user.role,
       status: user.status,
-      profile: profile.profileImageUrl || 'user.png',
+      profile: user.profile.profileImageUrl || 'user.png',
       age: 25
     };
 
-    if (player.user_id) {
+    playerData.value = {
+      batting_style: player.batting_style,
+      batting_average: player.batting_average,
+      batting_strike_rate: player.batting_strike_rate,
+      batting_runs: player.batting_runs,
+      number_of_hundreds: player.number_of_hundreds,
+      number_of_fifties: player.number_of_fifties,
+      batting_high_score: player.batting_high_score,
 
-      Object.assign(playerData.value, {
+      bowling_style: player.bowling_style,
+      bowling_average: player.bowling_average,
+      bowling_strike_rate: player.bowling_strike_rate,
+      bowling_wickets: player.bowling_wickets,
+      bowling_economy: player.bowling_economy,
 
-        batting_style: player.batting_style,
-        batting_average: player.batting_average,
-        batting_strike_rate: player.batting_strike_rate,
-        batting_runs: player.batting_runs,
-        number_of_hundreds: player.number_of_hundreds,
-        number_of_fifties: player.number_of_fifties,
-        batting_high_score: player.batting_high_score,
-
-        bowling_style: player.bowling_style,
-        bowling_average: player.bowling_average,
-        bowling_strike_rate: player.bowling_strike_rate,
-        bowling_wickets: player.bowling_wickets,
-        bowling_economy: player.bowling_economy,
-
-        number_of_catches: player.number_of_catches,
-        number_of_stumpings: player.number_of_stumpings,
-        number_of_matches: player.number_of_matches,
-        number_of_innings: player.number_of_innings,
-
-        player_status: player.status,
-        role: user.role,
-        user_id: userId,
-        status: 1
-      });
-    } 
-    else {
-      playerData.value.user_id = userId;
-      playerData.value.role = user.role;
-    }
+      number_of_catches: player.number_of_catches,
+      number_of_stumpings: player.number_of_stumpings,
+      number_of_matches: player.number_of_matches,
+      number_of_innings: player.number_of_innings,
+      status: 1,
+      playerId: player.id,
+      role: user.role
+    };
 
   } catch (err) {
     console.error('Failed to fetch player data:', err);
@@ -140,7 +128,7 @@ onMounted(async () => {
 const handleUpdate = async () => {
   try {
     const payload = { ...playerData.value };
-    const response = await createPlayer(payload);
+    const response = await updatePlayer(payload);
 
     if (response.data.success) {
       message.value = response.data.message;

@@ -1,5 +1,6 @@
 import User from '../models/user.model.mjs';
 import userProfileModel from '../models/userProfile.model.mjs';
+import Player from "../models/player.model.mjs";
 
 export const findUserByEmail = (email) => User.findOne({ email });
 export const saveUser = (user) => user.save();
@@ -13,6 +14,11 @@ export const saveAuthRepository = async (registeredUser) => {
     profileImageUrl: "user.png",
   });
   await userProfile.save();
+
+  if(savedUser.role != "Guest") {
+    const player = new Player({ user_id: savedUser._id });
+    await player.save();
+  }
 
   return {savedUser };
 };

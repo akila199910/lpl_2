@@ -11,29 +11,22 @@ export const getPlayersService = async () => {
 //   return successResponse("Render team create form");
 // };
 
-export const savePlayerService = async (playerData) => {
-
-  const existingPlayer = await Player.findOne({ user_id: playerData.user_id });
-
-  let player, user;
-
-  if (existingPlayer) {
-    ({ player, user } = await updatePlayerRepository(existingPlayer._id, playerData));
-
-  } 
-  else {
-    ({ player, user } = await savePlayerRepository(playerData)
-      // await transport.sendMail({
-      //   from: process.env.MAIL_FROM_ADDRESS,
-      //   to: user.email,
-      //   subject: "Approval Request",
-      //   text: `Hello ${user.name}, Your player request has been approved!`,
-      // });
-    );
-  }
-
-  return successResponse("Player updated successfully", player);
+export const updatePlayerService = async (playerData) => {
+  
+  const player = await updatePlayerRepository(playerData);
+if (!player) {
+    return errorResponse("Player not found or update failed", {});
+}
+return successResponse("Player updated successfully", player);
+// console.log("shbgewfckwe")
+// console.log(playerData)  
+// const player = await updatePlayerRepository(playerData);
+//   return successResponse("Player updated successfully", player);
 };
+
+
+
+
 
 
 export const getPlayerByIdService = async (id) => {

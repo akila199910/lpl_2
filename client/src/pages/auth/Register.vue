@@ -87,34 +87,15 @@ const handleSubmit = async () => {
         </p>
 
         <!-- Role Dropdown -->
-         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Select Your Role</label>
-            <div class="flex items-center gap-6">
-                <label class="inline-flex items-center">
-                <input
-                    type="radio"
-                    class="form-radio text-blue-600"
-                    value="Player"
-                    v-model="form.role"
-                />
-                <span class="ml-2 text-sm text-gray-700">Player</span>
-                </label>
-
-                <label class="inline-flex items-center">
-                <input
-                    type="radio"
-                    class="form-radio text-blue-600"
-                    value="Guest"
-                    v-model="form.role"
-                />
-                <span class="ml-2 text-sm text-gray-700">Guest</span>
-                </label>
-            </div>
-
-            <p v-if="errors?.role" class="text-sm text-red-500 mt-1">
-                {{ errors.role }}
-            </p>
-            </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Role</label>
+            <select v-model="form.role" class="input">
+                <option value="Batsman">Batsman</option>
+                <option value="Bowler">Bowler</option>
+                <option value="AllRounder">All Rounder</option>
+                <option value="WicketKeeper">Wicket Keeper</option>
+            </select>
+        </div>
 
         <BaseButton class=" text-wrap break-all overflow-hidden">Register</BaseButton>
 

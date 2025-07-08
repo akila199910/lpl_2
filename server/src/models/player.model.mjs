@@ -39,7 +39,7 @@ const playerSchema = new mongoose.Schema({
     number_of_fifties: { type: Number, required: false , default: null},
     number_of_catches: { type: Number, required: false , default: null},
     number_of_stumpings: { type: Number, required: false , default: null},
-    status: { type: Number, required: true, enum: [1,2,3,4,5,6] },
+    status: { type: Number, required: false, enum: [0,1,2,3,4,5,6], default: 0 },
 });
 
 playerSchema.set('toObject', { virtuals: true });

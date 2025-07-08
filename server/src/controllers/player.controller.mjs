@@ -1,4 +1,4 @@
-import {  getPlayerByIdService, getPlayersService, savePlayerService } from "../services/player.service.mjs";
+import {  getPlayerByIdService, getPlayersService, updatePlayerService } from "../services/player.service.mjs";
 
 
 export const getPlayersController = async (req, res) => {
@@ -6,8 +6,8 @@ export const getPlayersController = async (req, res) => {
   return res.status(result.success ? 200 : 400).json(result);
 };
 
-export const savePlayerController = async (req, res) => {
-  const result = await savePlayerService(req.body);
+export const updatePlayerController = async (req, res) => {
+  const result = await updatePlayerService(req.body);
   return res.status(result.success ? 200 : 400).json(result);
 };
 

@@ -1,10 +1,7 @@
 import { body } from 'express-validator';
 
 
-export const playerCreateValidation = [
-  body('user_id')
-    .notEmpty()
-    .withMessage('User id is required'),
+export const playerUpdateValidation = [
 
   body('role')
     .notEmpty()
@@ -27,6 +24,11 @@ export const playerCreateValidation = [
     .if((value, { req }) => ['Batsman', 'Wicketkeeper', 'AllRounder'].includes(req.body.role))
     .notEmpty()
     .withMessage('Batting strike rate is required'),
+
+  body('batting_high_score')
+    .if((value, { req }) => ['Batsman', 'Wicketkeeper', 'AllRounder'].includes(req.body.role))
+    .notEmpty()
+    .withMessage('Batting High score is required'),
 
   body('batting_runs')
     .if((value, { req }) => ['Batsman', 'Wicketkeeper', 'AllRounder'].includes(req.body.role))

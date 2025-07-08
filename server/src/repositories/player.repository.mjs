@@ -1,24 +1,19 @@
-import User from "../models/user.model.mjs";
 import Player from "../models/player.model.mjs";
+import User from "../models/user.model.mjs";
 
 export const getPlayerRepository = async () => {
-  return await User.find({
-    role: { $in: ['Batsman', 'Bowler', 'Allrounder', 'Wicket Keeper'] }
-  }).populate('profile');
+  return await Player.find().populate({
+      path: 'user_id',
+      populate: { path: 'profile' }
+    });
 };
 
-
 export const getPlayerByIdRepository = async (id) => {
-  let player = await Player.findOne({ user_id: id })
+  let player = await Player.findById(id)
     .populate({
       path: 'user_id',
       populate: { path: 'profile' }
     });
-
-  if (!player) {
-    const user = await User.findById(id).populate('profile');
-    return user;
-  }
 
   return player;
 };
@@ -34,13 +29,30 @@ export const savePlayerRepository = async (playerData) => {
   return { player, user };
 };
 
-export const updatePlayerRepository = async (playerId, updateData) => {
-  const player = await Player.findByIdAndUpdate(playerId, updateData, { new: true });
-  const user = await User.findById(updateData.user_id);
-  user.status = 1;
-  await user.save();
+export const updatePlayerRepository = async (playerData) => {
+ const  updateData = { batting_style: playerData.batting_style,
+     bowling_style: playerData.bowling_style,
+     batting_average: playerData.batting_average,
+     bowling_average: playerData.bowling_average,
+     batting_strike_rate: playerData.batting_strike_rate,
+     bowling_strike_rate: playerData.bowling_strike_rate,
+     batting_high_score: playerData.batting_high_score,
+     batting_runs: playerData.batting_runs,
+     bowling_wickets: playerData.bowling_wickets,
+     bowling_economy: playerData.bowling_economy,
+     number_of_hundreds: playerData.number_of_hundreds,
+     number_of_fifties: playerData.number_of_fifties,
+     number_of_matches: playerData.number_of_matches,
+     number_of_innings: playerData.number_of_innings,
+     number_of_catches: playerData.number_of_catches,
+     number_of_stumpings: playerData.number_of_stumpings,
+     status: playerData.status
+     
+    };
+    console.log(playerData)
+  const player = await Player.findByIdAndUpdate(playerData.playerId, updateData, { new: true });
 
-  return { player, user };
+  return player;
 };
 
 
