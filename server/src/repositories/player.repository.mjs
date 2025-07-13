@@ -49,7 +49,6 @@ export const updatePlayerRepository = async (playerData) => {
      status: playerData.status
      
     };
-    console.log(playerData)
   const player = await Player.findByIdAndUpdate(playerData.playerId, updateData, { new: true });
 
   return player;

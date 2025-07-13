@@ -79,6 +79,6 @@ export const playerUpdateValidation = [
   body('status')
     .notEmpty()
     .withMessage('Status is required')
-    .isIn([ 1, 2, 3, 4, 5, 6])
+    .isIn([0, 1, 2, 3, 4, 5, 6])
     .withMessage('Invalid status'),
 ];

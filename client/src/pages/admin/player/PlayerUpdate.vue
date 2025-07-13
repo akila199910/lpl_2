@@ -15,8 +15,6 @@ import SuccessPopup from '../../../components/ui/SuccessPopup.vue';
 
 const route = useRoute();
 const playerId = route.params.id;
-console.log("lceuwtygeude")
-console.log(playerId);
 
 const errors = ref({});
 const message = ref('');
@@ -84,14 +82,13 @@ onMounted(async () => {
 
     const player = res.data.data;
     const user = player.user_id ;
-
     userData.value = {
       name: user.name,
       email: user.email,
       contactNumber: user.contactNumber,
       country: user.country,
       role: user.role,
-      status: user.status,
+      status: player.status,
       profile: user.profile.profileImageUrl || 'user.png',
       age: 25
     };
@@ -115,7 +112,7 @@ onMounted(async () => {
       number_of_stumpings: player.number_of_stumpings,
       number_of_matches: player.number_of_matches,
       number_of_innings: player.number_of_innings,
-      status: 1,
+      status: player.status == 0 ? 1 : player.status,
       playerId: player.id,
       role: user.role
     };

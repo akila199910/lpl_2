@@ -5,7 +5,7 @@ import { ref, onMounted } from 'vue';
 import DashboardLayout from '../../../layouts/DashboardLayout.vue';
 import { useRouter } from 'vue-router';
 import defualtUser from '../../../assets/defualtUser.jpeg';
-import { getPlayers } from '../../../services/playerService';
+import { getPlayerById, getPlayers } from '../../../services/playerService';
 import TableHeader from '../../../components/ui/TableHeader.vue';
 import moveIcon from '../../../assets/icons/move.svg';
 
@@ -21,7 +21,7 @@ const columns = [
 const players = ref([]);
 const loading = ref(true);
 const errors = ref(null);
-const selectedPlayer = ref();
+const selectedPlayer = ref({});
 const showModal = ref(false);
 const router = useRouter();
 
@@ -58,7 +58,6 @@ onMounted(async () => {
     if (response.data.success === true) {
 
       const raw = response.data.data;
-      console.log(raw)
       players.value = raw.map((player) => ({
         id: player._id,
         name: player.user_id.name,
@@ -67,7 +66,7 @@ onMounted(async () => {
         status: player.status,
         profile: player.user_id.profile?.profileImageUrl || 'user.png',
       }));
-      
+
     }
   } catch (err) {
     errors.value = err.response?.data?.errors || {};
@@ -76,8 +75,20 @@ onMounted(async () => {
   }
 });
 
-const handleView = (id) => {
-  console.log(id);
+const handleView = async (id) => {
+  try {
+    const player = await getPlayerById(id);
+
+    if (player.data.success === true) {
+      selectedPlayer.value = player.data.data;
+      console.log(selectedPlayer);
+      showModal.value = true;
+    }
+
+  } catch (error) {
+
+  }
+
 };
 const handleEdita = (id) => {
 
@@ -91,39 +102,27 @@ const handleDelete = (id) => {
 <template>
   <DashboardLayout>
 
-      <div class="w-full px-4 sm:px-6 lg:px-8 py-4">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <h1 class="text-xl sm:text-2xl font-semibold text-gray-800">
+    <div class="w-full px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <h1 class="text-xl sm:text-2xl font-semibold text-gray-800">
           Players Overview
-          </h1>
-          
+        </h1>
+
       </div>
 
       <div class="bg-white rounded-lg shadow-md p-4">
-        <EasyDataTable
-          :headers="columns"
-          :items="players"
-          buttons-pagination
-          table-class-name="customize-table"
-          :rows-per-page="10"
-          :rows-items="[10, 25, 50, 100]"
-          border-cell
-        >
+        <EasyDataTable :headers="columns" :items="players" buttons-pagination table-class-name="customize-table"
+          :rows-per-page="10" :rows-items="[10, 25, 50, 100]" border-cell>
           <template #item-profile="{ profile }">
-            <img
-              :src="profile === 'user.png' ? defualtUser : profile"
-              alt="Profile"
-              class="w-10 h-10 rounded-full object-cover mx-auto"
-            />
+            <img :src="profile === 'user.png' ? defualtUser : profile" alt="Profile"
+              class="w-10 h-10 rounded-full object-cover mx-auto" />
           </template>
 
           <template #item-status="{ status }">
-            <span
-              :class="[
-                'px-2 py-1 rounded-full text-white text-xs font-semibold',
-                statusColor(status)
-              ]"
-            >
+            <span :class="[
+              'px-2 py-1 rounded-full text-white text-xs font-semibold',
+              statusColor(status)
+            ]">
               {{ statusLabel(status) }}
             </span>
           </template>
@@ -146,61 +145,242 @@ const handleDelete = (id) => {
       </div>
     </div>
 
-    <!-- View Player Modal -->
-    <div
-      v-if="showModal"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 px-4"
-    >
-      <div class="bg-white rounded-2xl shadow-xl w-full max-w-3xl p-6 relative overflow-y-auto max-h-[90vh]">
-        <!-- Close Button -->
-        <button
-          @click="showModal = false"
-          class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl"
-        >
-          &times;
-        </button>
+    <!-- MODAL WRAPPER -->
+    <div v-if="showModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 px-2 sm:px-4 py-4">
+      <!-- MODAL CONTENT -->
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
 
-        <!-- Modal Content -->
-        <h2 class="text-2xl font-bold mb-6 text-center">Player Details</h2>
+        <!-- HEADER -->
+        <div class="flex justify-between items-center border-b px-4 py-3">
+          <h2 class="text-xl sm:text-2xl font-semibold text-gray-800">Player Details</h2>
+          <button @click="showModal = false" class="text-gray-500 hover:text-gray-700 text-2xl">
+            &times;
+          </button>
+        </div>
 
-        <div v-if="selectedPlayer" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-          <div>
-            <p class="text-sm text-gray-500">Profile</p>
+        <!-- BODY -->
+        <div class="flex flex-col sm:flex-row justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 ">
+
+          <!-- PROFILE IMAGE -->
+          <div class="flex justify-center ">
             <img
-              :src="selectedPlayer.profile === 'user.png' ? defualtUser : selectedPlayer.profile"
-              alt="Logo"
-              class="w-16 h-16 rounded-full object-cover"
-            />
+              :src="selectedPlayer.user_id.profile?.profileImageUrl == 'user.png' ? defualtUser : selectedPlayer.user_id.profile?.profileImageUrl"
+              alt="Profile" class="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-gray-200 object-cover" />
           </div>
 
-          <div>
-            <p class="text-sm text-gray-500">Name</p>
-            <p class="text-base font-semibold break-words">{{ selectedPlayer.name }}</p>
+          <!-- INFO LIST -->
+          <div class="flex flex-col justify-center  space-y-4 ">
+            <div class="flex justify-between items-center border-b px-4 py-3">
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate">Profile Information</h2>
+            </div>
+            <!-- Name -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Name:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.user_id.name">
+                {{ selectedPlayer.user_id.name }}
+              </span>
+            </div>
+
+            <!-- Role -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Role:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.user_id.role">
+                {{ selectedPlayer.user_id.role }}
+              </span>
+            </div>
+
+            <!-- Country -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Country:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.user_id.country">
+                {{ selectedPlayer.user_id.country }}
+              </span>
+            </div>
+
+            <!-- Email -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Email:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.user_id.email">
+                {{ selectedPlayer.user_id.email }}
+              </span>
+            </div>
+
+            <!-- Phone -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Phone:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.user_id.contactNumber">
+                {{ selectedPlayer.user_id.contactNumber }}
+              </span>
+            </div>
           </div>
 
-          <div>
-            <p class="text-sm text-gray-500">Status</p>
-            <p class="text-base font-semibold">
-              {{ selectedTeam.status === 1 ? 'Active' : 'Inactive' }}
-            </p>
+        </div>
+
+          <div v-if="selectedPlayer.user_id.role !== 'Bowler'" class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 ">
+            <div class="flex justify-between items-center border-b px-4 py-3">
+              <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2" title="Player Batting Information">
+                Player
+                Batting Information</h2>
+            </div>
+
+            <!-- INFO LIST OF STAT -->
+            <div class="flex flex-col justify-center w-full space-y-4 ">
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Style:</label>
+                <span class="truncate text-gray-900"
+                  :title="selectedPlayer.batting_style == 1 ? 'Right Hand' : 'Left Hand'">
+                  {{ selectedPlayer.batting_style == 1 ? 'Right Hand' : 'Left Hand' }}
+                </span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Average:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.batting_average">
+                  {{ selectedPlayer.batting_average }}
+                </span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Strike Rate:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.batting_strike_rate">
+                  {{ selectedPlayer.batting_strike_rate }}
+                </span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Runs:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.batting_runs">
+                  {{ selectedPlayer.batting_runs }}
+                </span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Hundreds:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.number_of_hundreds">
+                  {{ selectedPlayer.number_of_hundreds }}
+                </span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Fifties:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.number_of_fifties">
+                  {{ selectedPlayer.number_of_fifties }}
+                </span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">High Score:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.batting_high_score">
+                  {{ selectedPlayer.batting_high_score }}
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <p class="text-sm text-gray-500">Contact Number</p>
-            <p class="text-base font-semibold">{{ selectedTeam.owner_id?.contactNumber }}</p>
+          <div v-if="selectedPlayer.user_id.role !== 'Batsman' && selectedPlayer.user_id.role !== 'WicketKeeper'" class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 ">
+            <div class="flex justify-between items-center border-b px-4 py-3">
+              <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2" title="Player Bowling Information">
+                Player
+                Bowling Information</h2>
+            </div>
+
+            <!-- INFO LIST OF STAT -->
+            <div class="flex flex-col justify-center w-full space-y-4 ">
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Style:</label>
+                <span class="truncate text-gray-900"
+                  :title="selectedPlayer.bowling_style == 1 ? 'Right Hand' : 'Left Hand'">
+                  {{ selectedPlayer.bowling_style == 1 ? 'Right Hand' : 'Left Hand' }}
+                </span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Average:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.bowling_average">
+                  {{ selectedPlayer.bowling_average }}
+                </span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Strike Rate:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.bowling_strike_rate">
+                  {{ selectedPlayer.bowling_strike_rate }}
+                </span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Economy:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.bowling_economy">
+                  {{ selectedPlayer.bowling_economy }}
+                </span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Wickets:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.bowling_wickets">
+                  {{ selectedPlayer.bowling_wickets }}
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <p class="text-sm text-gray-500">Total Contracts</p>
-            <p class="text-base font-semibold">{{ selectedTeam.total_contract }}</p>
+          <div v-if="selectedPlayer.user_id.role == 'WicketKeeper'" class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 ">
+            <div class="flex justify-between items-center border-b px-4 py-3">
+              <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2" title="Player Wicket Keeper Information">
+                Player
+                Wicket Keeper Information</h2>
+            </div>
+
+            <!-- INFO LIST OF STAT -->
+            <div class="flex flex-col justify-center w-full space-y-4 ">
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Catches:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.number_of_catches">
+                  {{ selectedPlayer.number_of_catches }}
+                </span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Stumpings:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.number_of_stumpings">
+                  {{ selectedPlayer.number_of_stumpings }}
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <p class="text-sm text-gray-500">Total Bids</p>
-            <p class="text-base font-semibold">{{ selectedTeam.total_bids }}</p>
+          <div class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 " >
+            <div class="flex justify-between items-center border-b px-4 py-3">
+              <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2" title="Player Other Information">
+                Player
+                Other Information</h2>
+            </div>
+
+            <!-- INFO LIST OF STAT -->
+            <div class="flex flex-col justify-center w-full space-y-4 ">
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Matches:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.number_of_matches">
+                  {{ selectedPlayer.number_of_matches }}
+                </span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <label class="font-medium text-gray-700 w-24">Innings:</label>
+                <span class="truncate text-gray-900" :title="selectedPlayer.number_of_innings">
+                  {{ selectedPlayer.number_of_innings }}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+
     </div>
+
   </DashboardLayout>
 </template>

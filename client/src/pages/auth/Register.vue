@@ -17,7 +17,7 @@ const form = reactive({
   country: '',
   status: 1,    
   role: '',
-  status :1
+  status :0
 });
 
 const errors = ref({});
