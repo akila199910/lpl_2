@@ -5,6 +5,7 @@ import authRoutes from './authRoutes';
 import teamRoutes from './teamRoutes';
 import dashboardRoutes from './dashboardRoutes'
 import playerRoutes from './playerRoutes'
+import auctionRoute from './auctionRoute';
 
 // Combine all route arrays into one
 const routes = [
@@ -12,7 +13,8 @@ const routes = [
   ...dashboardRoutes,
   // ...userRoutes,
   ...teamRoutes,
-  ...playerRoutes
+  ...playerRoutes,
+  ...auctionRoute
 ];
 
 

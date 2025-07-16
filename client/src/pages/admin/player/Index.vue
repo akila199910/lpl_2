@@ -6,6 +6,7 @@ import DashboardLayout from '../../../layouts/DashboardLayout.vue';
 import { useRouter } from 'vue-router';
 import defualtUser from '../../../assets/defualtUser.jpeg';
 import { getPlayerById, getPlayers } from '../../../services/playerService';
+
 import TableHeader from '../../../components/ui/TableHeader.vue';
 import moveIcon from '../../../assets/icons/move.svg';
 
@@ -97,6 +98,9 @@ const handleEdita = (id) => {
 const handleDelete = (id) => {
   console.log(id);
 };
+const handlePush = (id) => {
+  router.push(`/live/auction/${id}`);
+};
 </script>
 
 <template>
@@ -127,7 +131,7 @@ const handleDelete = (id) => {
             </span>
           </template>
 
-          <template #item-actions="{ id }">
+          <template #item-actions="{ id , status}">
             <div class="flex items-center gap-2 justify-center">
               <button @click="handleView(id)" title="View">
                 <Icon icon="mdi:eye" class="w-5 h-5 text-blue-500 hover:text-blue-700" />
@@ -138,9 +142,11 @@ const handleDelete = (id) => {
               <button @click="handleDelete(id)" title="Delete">
                 <Icon icon="mdi:delete" class="w-5 h-5 text-red-500 hover:text-red-700" />
               </button>
+              <button @click="handlePush(id)" title="Push" v-if="status == 1">
+                <img :src="moveIcon" class="w-5 h-5" alt="Move">
+              </button>
             </div>
           </template>
-
         </EasyDataTable>
       </div>
     </div>
@@ -378,8 +384,7 @@ const handleDelete = (id) => {
               </div>
             </div>
           </div>
-        </div>
-
+      </div>
     </div>
 
   </DashboardLayout>
