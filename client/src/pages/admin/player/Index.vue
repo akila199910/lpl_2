@@ -6,9 +6,11 @@ import DashboardLayout from '../../../layouts/DashboardLayout.vue';
 import { useRouter } from 'vue-router';
 import defualtUser from '../../../assets/defualtUser.jpeg';
 import { getPlayerById, getPlayers } from '../../../services/playerService';
-
-import TableHeader from '../../../components/ui/TableHeader.vue';
 import moveIcon from '../../../assets/icons/move.svg';
+import actionIcon from '../../../assets/icons/action.svg';
+import eyeIcon from '../../../assets/icons/eye.svg';
+import pencilIcon from '../../../assets/icons/pencil.svg';
+import deleteIcon from '../../../assets/icons/delete.svg';
 
 const columns = [
   { text: 'Profile', value: 'profile' },
@@ -131,22 +133,41 @@ const handlePush = (id) => {
             </span>
           </template>
 
-          <template #item-actions="{ id , status}">
-            <div class="flex items-center gap-2 justify-center">
-              <button @click="handleView(id)" title="View">
-                <Icon icon="mdi:eye" class="w-5 h-5 text-blue-500 hover:text-blue-700" />
-              </button>
-              <button @click="handleEdita(id)" title="Edit">
-                <Icon icon="mdi:pencil" class="w-5 h-5 text-green-500 hover:text-green-700" />
-              </button>
-              <button @click="handleDelete(id)" title="Delete">
-                <Icon icon="mdi:delete" class="w-5 h-5 text-red-500 hover:text-red-700" />
-              </button>
-              <button @click="handlePush(id)" title="Push" v-if="status == 1">
-                <img :src="moveIcon" class="w-5 h-5" alt="Move">
-              </button>
+          <template #item-actions="{ id, status }">
+            <div class="relative group inline-block">
+              <!-- Action Icon Trigger -->
+              <img :src="actionIcon" alt="Actions" class="cursor-pointer w-5 h-5" />
+
+              <!-- Dropdown Menu -->
+              <div
+                class="absolute z-50 top-6 left-0 w-40 bg-white rounded-md shadow-lg border border-gray-200 text-sm 
+                      opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-150 ease-in-out">
+                
+                <button @click="handleView(id)" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2">
+                  <img :src="eyeIcon" alt="View" class="w-5 h-5" />
+                  View
+                </button>
+
+                <button @click="handleEdita(id)" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2">
+                  <img :src="pencilIcon" alt="Edit" class="w-5 h-5" />
+                  Edit
+                </button>
+
+                <button @click="handleDelete(id)" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2">
+                  <img :src="deleteIcon" alt="Delete" class="w-5 h-5" />
+                  Delete
+                </button>
+
+                <button v-if="status == 1" @click="handlePush(id)"
+                  class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2">
+                  <img :src="moveIcon" alt="Push" class="w-5 h-5" />
+                  Push to Auction
+                </button>
+              </div>
             </div>
           </template>
+
+
         </EasyDataTable>
       </div>
     </div>
@@ -223,8 +244,8 @@ const handlePush = (id) => {
 
         </div>
 
-          <div v-if="selectedPlayer.user_id.role !== 'Bowler'" class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 ">
-            <div class="flex justify-between items-center border-b px-4 py-3">
+          <div v-if="selectedPlayer.user_id.role !== 'Bowler'" class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 sm:max-w-3xl ">
+            <div class="flex justify-between items-center border-b px-4 py-3 max-w-xl">
               <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2" title="Player Batting Information">
                 Player
                 Batting Information</h2>
