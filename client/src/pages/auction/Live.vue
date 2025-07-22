@@ -3,13 +3,14 @@ import { useRoute } from 'vue-router';
 import defaulteUerImage from '../../assets/defualtUser.jpeg';
 import logo from '../../assets/download.png';
 import { onMounted, ref, computed } from 'vue';
-import { getPlayerById } from '../../services/autionService';
+import { getPlayerById, saveBid } from '../../services/autionService';
 
 const route = useRoute();
 const playerId = route.params.id;
 const player = ref({});
 const user = ref({});
-// const bids = ref({});
+const bids = ref();
+const errorMessage = ref('');
 
 
 onMounted(async () => {
@@ -52,6 +53,26 @@ const statArray = computed(() => {
   return rawStats.filter(stat => stat.value !== null && stat.value !== undefined);
 });
 
+const handleBid = async () => {
+
+  errorMessage.value = ''
+
+  const bidData = {
+    bidValue: bids.value,
+    playerId: player.value.id
+  }
+
+  try {
+
+    const response = await saveBid(bidData);
+
+    // console.log(response.data);
+
+  } catch (error) {
+    errorMessage.value = error.response.data.message
+  }
+}
+
 </script>
 
 <template>
@@ -87,21 +108,27 @@ const statArray = computed(() => {
       </div>
 
       <div class="col-span-5">
-          <div class=" text-center flex flex-row p-2 justify-between px-4">
-            <div class="font-bold">Logo</div>
-            <div class="font-bold">Bid Amount</div>            
-          </div>
-          <div class="flex flex-row p-2 justify-between items-center px-4">
-            <img src="../../assets/download.png" class="w-12 h-12 rounded-full" alt="">
-            <div class="font-semibold">1000</div>            
-          </div>
+        <div class=" text-center flex flex-row p-2 justify-between px-4">
+          <div class="font-bold">Logo</div>
+          <div class="font-bold">Bid Amount</div>
+        </div>
+        <div class="flex flex-row p-2 justify-between items-center px-4">
+          <img src="../../assets/download.png" class="w-12 h-12 rounded-full" alt="">
+          <div class="font-semibold">1000</div>
+        </div>
       </div>
 
     </div>
 
-    <div class=" flex flex-row absolute bottom-0 left-0 z-10 m-4">
-      <input type="text" class="border border-gray-300 rounded-md p-2 w-full" placeholder="Place your bid">
-      <button class="bg-blue-500 text-white rounded-md p-2 ml-2">Submit</button>
+    <div class=" flex flex-col absolute bottom-0 left-0 z-10 m-4">
+      <div class="flex flex-row">
+        <input type="text" class="border border-gray-300 rounded-md p-2 w-full" placeholder="Place your bid"
+          v-model="bids">
+        <button class="bg-blue-500 text-white rounded-md p-2 ml-2" @click="handleBid">
+          Submit
+        </button>
+      </div>
+      <span v-if="errorMessage" class="text-red-500 mt-1">{{ errorMessage }}</span>
     </div>
 
 
