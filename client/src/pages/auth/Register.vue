@@ -26,7 +26,6 @@ const errors = ref({});
 const handleSubmit = async () => {
 
     errors.value = {};
-    console.log(form);
     const res = await authStore.register(form);
     if (!res.success) {
         errors.value = res.errors;

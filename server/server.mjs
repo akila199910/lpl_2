@@ -9,6 +9,7 @@ import userRouter from "./src/routes/user.route.mjs";
 import teamRouter from "./src/routes/team.route.mjs";
 import playerRouter from "./src/routes/player.route.mjs";
 import bidRouter from "./src/routes/bidRouter.mjs";
+import settingRouter from "./src/routes/settingsRouter.mjs";
 
 
 
@@ -25,7 +26,8 @@ server.use("/auth", authRouter);
 server.use("/users", userRouter);
 server.use("/teams", teamRouter);
 server.use("/players", playerRouter);
-server.use("/bids", bidRouter)
+server.use("/bids", bidRouter);
+server.use("/settings", settingRouter);
 
 server.use(errorHandlerMiddleware);
 
