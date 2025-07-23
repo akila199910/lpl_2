@@ -11,6 +11,7 @@ import actionIcon from '../../../assets/icons/action.svg';
 import eyeIcon from '../../../assets/icons/eye.svg';
 import pencilIcon from '../../../assets/icons/pencil.svg';
 import deleteIcon from '../../../assets/icons/delete.svg';
+import { pushPlayer } from '../../../services/autionService';
 
 const columns = [
   { text: 'Profile', value: 'profile' },
@@ -27,6 +28,10 @@ const errors = ref(null);
 const selectedPlayer = ref({});
 const showModal = ref(false);
 const router = useRouter();
+const auctionData = ref({
+        player_id : '',
+        auctionStatus : 0  
+    })
 
 
 const statusLabel = (status) => {
@@ -100,8 +105,23 @@ const handleEdita = (id) => {
 const handleDelete = (id) => {
   console.log(id);
 };
-const handlePush = (id) => {
-  router.push(`/live/auction/${id}`);
+const handlePush = async (id) => {
+
+  
+  try {
+
+     auctionData.value = {
+      player_id: id,
+      auctionStatus: 0, 
+    };
+    const response = await pushPlayer(auctionData.value)
+    console.log(response)
+
+  } catch (error) {
+
+    console.log(error)
+    
+  }
 };
 </script>
 

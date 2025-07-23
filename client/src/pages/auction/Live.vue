@@ -16,7 +16,6 @@ const errorMessage = ref('');
 onMounted(async () => {
   try {
     const res = await getPlayerById(playerId);
-    if (!res.data.success) return;
 
     player.value = res.data.data;
     user.value = player.value.user_id;

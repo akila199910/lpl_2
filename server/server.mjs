@@ -10,6 +10,7 @@ import teamRouter from "./src/routes/team.route.mjs";
 import playerRouter from "./src/routes/player.route.mjs";
 import bidRouter from "./src/routes/bidRouter.mjs";
 import settingRouter from "./src/routes/settingsRouter.mjs";
+import auctionRouter from "./src/routes/auctionRouter.mjs";
 
 
 
@@ -28,7 +29,7 @@ server.use("/teams", teamRouter);
 server.use("/players", playerRouter);
 server.use("/bids", bidRouter);
 server.use("/settings", settingRouter);
-
+server.use("/auctions", auctionRouter);
 server.use(errorHandlerMiddleware);
 
 mongoose.connect(process.env.MONGO_URI)
