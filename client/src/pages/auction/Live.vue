@@ -1,24 +1,37 @@
 <script setup>
-import { useRoute } from 'vue-router';
 import defaulteUerImage from '../../assets/defualtUser.jpeg';
 import logo from '../../assets/download.png';
 import { onMounted, ref, computed } from 'vue';
-import { getPlayerById, saveBid } from '../../services/autionService';
+import { getAuction, getPlayerById, saveBid } from '../../services/autionService';
 
-const route = useRoute();
-const playerId = route.params.id;
 const player = ref({});
 const user = ref({});
 const bids = ref();
 const errorMessage = ref('');
+const timeLeftInSeconds = ref(0);
+
 
 
 onMounted(async () => {
   try {
-    const res = await getPlayerById(playerId);
+    const res = await getAuction();
 
-    player.value = res.data.data;
-    user.value = player.value.user_id;
+    const fullPlayer = res.data.data.player_id;
+
+    const expireTime = new Date(res.data.data.expire_time); // backend time
+    const now = new Date(); // current local time
+
+    const diffMs = expireTime - now; // difference in milliseconds
+    const diffSec = Math.floor(diffMs / 1000); // convert to seconds
+
+    timeLeftInSeconds.value = diffSec > 0 ? diffSec : 0; // prevent negatives
+
+    console.log("Time left (sec):", timeLeftInSeconds.value);
+
+    if (fullPlayer) {
+      player.value = fullPlayer;
+      user.value = fullPlayer.user_id || {};
+    }
 
   } catch (err) {
     console.error('Failed to fetch player data:', err);
@@ -27,7 +40,8 @@ onMounted(async () => {
 
 
 const statArray = computed(() => {
-  if (!player.value) return [];
+
+  if (!player.value || typeof player.value !== 'object') return [];
 
   const p = player.value;
 
@@ -39,7 +53,6 @@ const statArray = computed(() => {
     { label: 'Strike Rate', value: p.batting_strike_rate },
     { label: 'Runs', value: p.batting_runs },
     { label: 'High Score', value: p.batting_high_score },
-    { label: 'Runs', value: p.batting_runs },
     { label: 'Hundreds', value: p.number_of_hundreds },
     { label: 'Fifties', value: p.number_of_fifties },
     { label: 'Wickets', value: p.bowling_wickets },
@@ -51,6 +64,7 @@ const statArray = computed(() => {
 
   return rawStats.filter(stat => stat.value !== null && stat.value !== undefined);
 });
+
 
 const handleBid = async () => {
 

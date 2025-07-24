@@ -89,7 +89,6 @@ const handleView = async (id) => {
 
     if (player.data.success === true) {
       selectedPlayer.value = player.data.data;
-      console.log(selectedPlayer);
       showModal.value = true;
     }
 
@@ -107,15 +106,18 @@ const handleDelete = (id) => {
 };
 const handlePush = async (id) => {
 
-  
   try {
 
      auctionData.value = {
       player_id: id,
       auctionStatus: 0, 
     };
+
     const response = await pushPlayer(auctionData.value)
-    console.log(response)
+
+    if(response.data.success){
+      router.push("/live");
+    }
 
   } catch (error) {
 

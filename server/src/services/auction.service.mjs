@@ -1,6 +1,32 @@
 import Rule from "../models/rule.model.mjs";
-import { saveAuctionRepository } from "../repositories/auction.repository.mjs";
+import { getAuctionRepository, saveAuctionRepository } from "../repositories/auction.repository.mjs";
 
+export const getAuctionService = async () => {
+  try {
+    const auction = await getAuctionRepository();
+
+    if (!auction) {
+      return {
+        success: false,
+        message: "No ongoing auction found.",
+        isServerError: false // Not a server error, just no data
+      };
+    }
+
+    return {
+      success: true,
+      message: "Auction fetched successfully.",
+      data: auction
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Failed to fetch auction.",
+      error: error.message,
+      isServerError: true
+    };
+  }
+};
 export const saveAuctionService = async (auction) => {
   try {
     const rule = await Rule.findOne({});

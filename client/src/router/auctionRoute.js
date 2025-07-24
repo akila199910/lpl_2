@@ -2,7 +2,7 @@ import Live from "../pages/auction/Live.vue";
 
 export default [
     {
-        path: '/live/auction/:id',
+        path: '/live',
         component: Live,
     },
 ];
