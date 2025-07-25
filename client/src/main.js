@@ -12,3 +12,6 @@ app.use(createPinia());
 app.use(router);
 app.component('Icon', Icon);
 app.mount('#app');
+console.log("Mode:", import.meta.env.MODE);
+console.log("API Base URL:", import.meta.env.VITE_API_BASE_URL);
+console.log("Socket URL:", import.meta.env.VITE_SOCKET_URL);

@@ -1,5 +1,4 @@
 import express from "express";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import http from "http";
@@ -14,10 +13,16 @@ import playerRouter from "./src/routes/player.route.mjs";
 import bidRouter from "./src/routes/bidRouter.mjs";
 import settingRouter from "./src/routes/settingsRouter.mjs";
 import auctionRouter from "./src/routes/auctionRouter.mjs";
-
 import { initSocket } from "./src/utils/socket.js";
 
-dotenv.config();
+import dotenv from "dotenv";
+
+const env = process.env.NODE_ENV || 'development';
+dotenv.config({ path: `.env.${env}` });
+
+console.log("Using env:", env);
+console.log("CLIENT_URL:", process.env.CLIENT_URL);
+
 
 const app = express();
 const server = http.createServer(app);
@@ -25,9 +30,11 @@ const server = http.createServer(app);
 initSocket(server); 
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: process.env.CLIENT_URL,
   credentials: true,
 }));
+console.log("CORS origin:", process.env.CLIENT_URL);
+
 app.use(cookieParser());
 app.use(express.json());
 

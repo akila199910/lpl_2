@@ -1,13 +1,4 @@
-// services/authService.js
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: 'http://localhost:4000',
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+import api from './api';
 
 export default {
   login: (data) => api.post('/auth/login', data),
