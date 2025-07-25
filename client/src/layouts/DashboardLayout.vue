@@ -1,9 +1,24 @@
 <script setup>
 import Navbar from '../components/layout/Navbar.vue'
 import Sidebar from '../components/layout/Sidebar.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import socket from '../socket.js';
+
 
 const sidebarOpen = ref(false);
+const showNotification = ref(false);
+const auctionPlayer = ref(null);
+
+onMounted(() => {
+  socket.on('new-auction', (data) => {
+    auctionPlayer.value = data?.player_id?.name || 'New Player';
+    showNotification.value = true;
+
+    // setTimeout(() => {
+    //   showNotification.value = false;
+    // }, 5000);
+  });
+});
 </script>
 
 <!-- AppLayout.vue -->
@@ -22,6 +37,14 @@ const sidebarOpen = ref(false);
             sidebarOpen ? 'hidden sm:block' : ''
           ]"
         >
+        <!-- 🔔 Notification Box -->
+        <div
+          v-if="showNotification"
+          class="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-100 text-purple-800 px-6 py-4 rounded-lg shadow-xl z-50 text-center text-lg"
+        >
+           {{ auctionPlayer }} has been added to the auction!
+        </div>
+
         <slot />
       </div>
     </div>

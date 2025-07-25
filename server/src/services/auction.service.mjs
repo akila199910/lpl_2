@@ -1,3 +1,4 @@
+import { getIO } from "../utils/socket.js";
 import Rule from "../models/rule.model.mjs";
 import { getAuctionRepository, saveAuctionRepository } from "../repositories/auction.repository.mjs";
 
@@ -38,12 +39,13 @@ export const saveAuctionService = async (auction) => {
         isServerError: false
       };
     }
-
     auction.push_time = Date.now();
     auction.expire_time = new Date(Date.now() + rule.auction_time_limit * 60 * 1000);
     auction.status = 0;
 
     const result = await saveAuctionRepository(auction);
+    const io = getIO();
+    io.emit("new-auction", result);
 
     return {
       success: true,
