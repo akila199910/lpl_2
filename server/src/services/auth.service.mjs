@@ -19,7 +19,7 @@ export const loginUserService = async (req,res) => {
       httpOnly: true,
       sameSite: 'Lax', // or 'Strict' in production
       secure: false, // true if using https
-      maxAge: 3600000, // 1 hour
+      maxAge: 24 * 60 * 60 * 1000, 
     });
 
   return successResponse('User logged in successfully',{ user, token });

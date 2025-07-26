@@ -1,4 +1,4 @@
-import Bid from "../models/auction.model.mjs";
+import Bid from "../models/bid.model.mjs";
 import { errorResponse } from "../utils/apiResponse.mjs";
 
 export const getBidRepository = async () => {

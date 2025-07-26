@@ -3,38 +3,67 @@ import defaulteUerImage from '../../assets/defualtUser.jpeg';
 import logo from '../../assets/download.png';
 import { onMounted, ref, computed } from 'vue';
 import { getAuction, getPlayerById, saveBid } from '../../services/autionService';
+import { onUnmounted } from 'vue';
+import socket from '../../socket.js';
+
 
 const player = ref({});
 const user = ref({});
 const bids = ref();
 const errorMessage = ref('');
 const timeLeftInSeconds = ref(0);
+let countdownInterval = null;
+const auctionId = ref('');
+const highestBids = ref([]);
 
+onMounted(() => {
+  socket.on("newBid", (data) => {
+    console.log("New bid received:", data);
 
+    // Optional: update only if it's the highest for that team
+    const existing = highestBids.value.find(b => b.team_id === data.team_id);
 
+    // if (!existing || existing.bid_value < data.bid_value) {
+    //   const updated = highestBids.value.filter(b => b.team_id !== data.team_id);
+    //   highestBids.value = [...updated, data];
+    // }
+  });
+});
 onMounted(async () => {
   try {
     const res = await getAuction();
 
     const fullPlayer = res.data.data.player_id;
+    const expireTime = new Date(res.data.data.expire_time); 
+    auctionId.value = res.data.data.id;
+    const now = new Date();
+    const diffMs = expireTime - now;
+    const diffSec = Math.floor(diffMs / 1000);
+    timeLeftInSeconds.value = diffSec > 0 ? diffSec : 0;
 
-    const expireTime = new Date(res.data.data.expire_time); // backend time
-    const now = new Date(); // current local time
-
-    const diffMs = expireTime - now; // difference in milliseconds
-    const diffSec = Math.floor(diffMs / 1000); // convert to seconds
-
-    timeLeftInSeconds.value = diffSec > 0 ? diffSec : 0; // prevent negatives
-
-    console.log("Time left (sec):", timeLeftInSeconds.value);
 
     if (fullPlayer) {
       player.value = fullPlayer;
       user.value = fullPlayer.user_id || {};
+
     }
+
+    countdownInterval = setInterval(() => {
+      if (timeLeftInSeconds.value > 0) {
+        timeLeftInSeconds.value--;
+      } else {
+        clearInterval(countdownInterval);
+      }
+    }, 1000);
 
   } catch (err) {
     console.error('Failed to fetch player data:', err);
+  }
+});
+
+onUnmounted(() => {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
   }
 });
 
@@ -72,14 +101,12 @@ const handleBid = async () => {
 
   const bidData = {
     bidValue: bids.value,
-    playerId: player.value.id
+    playerId: player.value.id,
+    auctionId: auctionId.value
   }
 
   try {
-
     const response = await saveBid(bidData);
-
-    // console.log(response.data);
 
   } catch (error) {
     errorMessage.value = error.response.data.message
@@ -103,7 +130,7 @@ const handleBid = async () => {
           <p class="text-sm text-gray-600 truncate">{{ user.role }}</p>
         </div>
         <div class="col-span-1 text-center">
-          <div class="text-lg font-bold text-gray-800">60</div>
+          <div class="text-lg font-bold text-gray-800">{{ timeLeftInSeconds }}</div>
         </div>
       </div>
     </div>
