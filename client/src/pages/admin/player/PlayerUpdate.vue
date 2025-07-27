@@ -215,7 +215,7 @@ const confirmUpdate = async () => {
         <div class="mt-4" v-if="userData.role !== 'Bowler' ">
           <Batting :data="playerData" :errors="errors"/>
         </div>
-        <div class="mt-4"  v-if="userData.role !== 'Batsman' && userData.role !== 'WicketKeeper' ">
+        <div class="mt-4"  v-if="userData.role !== 'Batsman' && userData.role !== 'Wicketkeeper' ">
           <Bowling :data="playerData" :errors="errors"/>
         </div>
 

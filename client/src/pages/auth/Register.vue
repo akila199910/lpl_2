@@ -92,7 +92,7 @@ const handleSubmit = async () => {
                 <option value="Batsman">Batsman</option>
                 <option value="Bowler">Bowler</option>
                 <option value="AllRounder">All Rounder</option>
-                <option value="WicketKeeper">Wicket Keeper</option>
+                <option value="Wicketkeeper">Wicket Keeper</option>
             </select>
         </div>
 

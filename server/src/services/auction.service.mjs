@@ -1,6 +1,6 @@
 import { getIO } from "../utils/socket.js";
 import Rule from "../models/rule.model.mjs";
-import { getAuctionRepository, saveAuctionRepository } from "../repositories/auction.repository.mjs";
+import { getAuctionRepository, saveAuctionRepository, updateAuctionRepository } from "../repositories/auction.repository.mjs";
 
 export const getAuctionService = async () => {
   try {
@@ -62,3 +62,17 @@ export const saveAuctionService = async (auction) => {
     };
   }
 };
+
+export const updateAuctionStateService = async (auctionId) => {
+  try {
+    const result = await updateAuctionRepository(auctionId);
+    
+  } catch (error) {
+    return {
+      success: false,
+      message: "Failed to update auction state.",
+      error: error.message,
+      isServerError: true
+    };
+  }
+}

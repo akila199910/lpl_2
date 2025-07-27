@@ -2,9 +2,10 @@
 import defaulteUerImage from '../../assets/defualtUser.jpeg';
 import logo from '../../assets/download.png';
 import { onMounted, ref, computed } from 'vue';
-import { getAuction, getPlayerById, saveBid } from '../../services/autionService';
+import { getAuction, saveBid, } from '../../services/autionService';
 import { onUnmounted } from 'vue';
 import socket from '../../socket.js';
+import { updatePlayerTeam } from '../../services/playerService.js';
 
 
 const player = ref({});
@@ -17,16 +18,9 @@ const auctionId = ref('');
 const highestBids = ref([]);
 
 onMounted(() => {
-  socket.on("newBid", (data) => {
-    console.log("New bid received:", data);
-
-    // Optional: update only if it's the highest for that team
-    const existing = highestBids.value.find(b => b.team_id === data.team_id);
-
-    // if (!existing || existing.bid_value < data.bid_value) {
-    //   const updated = highestBids.value.filter(b => b.team_id !== data.team_id);
-    //   highestBids.value = [...updated, data];
-    // }
+  socket.on("highestBidsUpdate", (payload) => {
+    highestBids.value = payload.bidArray;
+    console.log(highestBids.value.team.logo);
   });
 });
 onMounted(async () => {
@@ -34,7 +28,7 @@ onMounted(async () => {
     const res = await getAuction();
 
     const fullPlayer = res.data.data.player_id;
-    const expireTime = new Date(res.data.data.expire_time); 
+    const expireTime = new Date(res.data.data.expire_time);
     auctionId.value = res.data.data.id;
     const now = new Date();
     const diffMs = expireTime - now;
@@ -48,11 +42,20 @@ onMounted(async () => {
 
     }
 
-    countdownInterval = setInterval(() => {
+    countdownInterval = setInterval(async () => {
       if (timeLeftInSeconds.value > 0) {
         timeLeftInSeconds.value--;
       } else {
         clearInterval(countdownInterval);
+        try {
+          await updatePlayerTeam({
+            playerId: player.value._id,
+            auctionId: auctionId.value,
+          });
+          console.log("Player team updated successfully.");
+        } catch (err) {
+          console.error("Failed to update player team:", err);
+        }
       }
     }, 1000);
 
@@ -149,12 +152,13 @@ const handleBid = async () => {
 
       <div class="col-span-5">
         <div class=" text-center flex flex-row p-2 justify-between px-4">
-          <div class="font-bold">Logo</div>
+          <div class="font-bold">Team</div>
           <div class="font-bold">Bid Amount</div>
         </div>
-        <div class="flex flex-row p-2 justify-between items-center px-4">
-          <img src="../../assets/download.png" class="w-12 h-12 rounded-full" alt="">
-          <div class="font-semibold">1000</div>
+        <div class="flex flex-row p-2 justify-between items-center px-4" v-for="highestBids in highestBids">
+          <img :src="highestBids.team.logo == 'user.png' ? logo : highestBids.team.logo" class="w-12 h-12 rounded-full"
+            alt="">
+          <div class="font-semibold">{{ highestBids.bid_value }}</div>
         </div>
       </div>
 

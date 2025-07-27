@@ -9,3 +9,7 @@ export const getAuctionRepository = async () => {
 export const saveAuctionRepository = async (auction) => {
   return await Auction.create(auction);
 };
+
+export const updateAuctionRepository = async (auctionId) => {
+  return await Auction.findByIdAndUpdate(auctionId,{ status: 1 },{ new: true });
+};

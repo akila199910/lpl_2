@@ -82,3 +82,8 @@ export const playerUpdateValidation = [
     .isIn([0, 1, 2, 3, 4, 5, 6])
     .withMessage('Invalid status'),
 ];
+
+export const playerTeamUpdateValidation = [
+  body('playerId').notEmpty().withMessage('Team id is required'),
+  body('auctionId').notEmpty().withMessage('Auction id is required'),
+];
