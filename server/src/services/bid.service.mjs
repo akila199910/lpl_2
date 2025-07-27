@@ -1,6 +1,6 @@
 import Bid from "../models/bid.model.mjs";
 import { getIO } from "../utils/socket.js";
-import { getBidRepository, saveBidRepository } from "../repositories/bid.repository.mjs";
+import { getBidRepository, getPlayerBidRepository, saveBidRepository } from "../repositories/bid.repository.mjs";
 import { errorResponse, successResponse } from "../utils/apiResponse.mjs";
 import Team from "../models/team.model.mjs";
 
@@ -9,6 +9,17 @@ export const getBidService = async () => {
     const bids = await getBidRepository();
 
     return successResponse("Bid fetched successfully",bids);
+};
+
+export const getPlayerBidService = async (id) => {
+
+  const auctionsData =  await getPlayerBidRepository(id);
+
+  if (!auctionsData) {
+    return errorResponse("Bid not found");
+  }
+
+  return successResponse("Bid fetched successfully",auctionsData);
 };
 
 export const saveBidService = async (bid) => {

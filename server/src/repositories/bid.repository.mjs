@@ -45,3 +45,24 @@ export const saveBidRepository = async (bidData) => {
   const highestBidsArray = await getHighestBidsByAuction(saved.auction_id);
   return highestBidsArray;
 };
+
+export const getPlayerBidRepository = async (id) => {
+  return await Bid.findOne({ auction_id: id })
+    .sort({ bid_value: -1 })
+    .populate({
+      path: 'team_id',
+      select: 'name logo'  
+    })
+    .populate({
+      path: 'player_id',
+      populate: {
+        path: 'user_id',
+        select: 'name',
+        populate: {
+          path: 'profile',
+          select: 'profileImageUrl'
+        }
+      }
+    });
+};
+

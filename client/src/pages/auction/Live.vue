@@ -6,8 +6,10 @@ import { getAuction, saveBid, } from '../../services/autionService';
 import { onUnmounted } from 'vue';
 import socket from '../../socket.js';
 import { updatePlayerTeam } from '../../services/playerService.js';
+import { useRouter } from 'vue-router';
 
 
+const router = useRouter();
 const player = ref({});
 const user = ref({});
 const bids = ref();
@@ -24,6 +26,7 @@ onMounted(() => {
   });
 });
 onMounted(async () => {
+
   try {
     const res = await getAuction();
 
@@ -56,6 +59,7 @@ onMounted(async () => {
         } catch (err) {
           console.error("Failed to update player team:", err);
         }
+        router.push(`/live/${auctionId.value}`);
       }
     }, 1000);
 

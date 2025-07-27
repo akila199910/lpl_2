@@ -1,9 +1,14 @@
-import { getBidService, saveBidService } from "../services/bid.service.mjs";
+import { getBidService, getPlayerBidService, saveBidService } from "../services/bid.service.mjs";
 
 export const getBidController = async (req, res) => {
   const result = await getBidService(req.body);
   return res.status(result.success ? 200 : 400).json(result);
 };
+
+export const getPlayerBidController = async (req, res) => {
+  const result = await getPlayerBidService(req.params.id);
+  return res.status(result.success ? 200 : 400).json(result);
+}
 
 export const saveBidController = async (req, res) => {
   
