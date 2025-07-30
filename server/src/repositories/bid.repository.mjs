@@ -1,3 +1,5 @@
+import { populate } from "dotenv";
+import Auction from "../models/auction.model.mjs";
 import Bid from "../models/bid.model.mjs";
 
 export const getBidRepository = async () => {
@@ -47,7 +49,7 @@ export const saveBidRepository = async (bidData) => {
 };
 
 export const getPlayerBidRepository = async (id) => {
-  return await Bid.findOne({ auction_id: id })
+  const bidData = await Bid.findOne({ auction_id: id })
     .sort({ bid_value: -1 })
     .populate({
       path: 'team_id',
@@ -64,5 +66,18 @@ export const getPlayerBidRepository = async (id) => {
         }
       }
     });
+    if(!bidData){
+      const playerData = await Auction.findById(id).populate({
+        path: 'player_id',
+        populate: { path: 'user_id',
+          populate:{
+            path: 'profile',
+            select: 'profileImageUrl'
+          }
+         }
+      });      
+      return playerData;
+    }
+    return bidData;
 };
 

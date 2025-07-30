@@ -15,8 +15,9 @@ export const getPlayerBidService = async (id) => {
 
   const auctionsData =  await getPlayerBidRepository(id);
 
-  if (!auctionsData) {
-    return errorResponse("Bid not found");
+  if(auctionsData.team_id == null)
+  {
+    return successResponse("Player unsold. Not bid value",auctionsData);
   }
 
   return successResponse("Bid fetched successfully",auctionsData);
