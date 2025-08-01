@@ -90,5 +90,6 @@ export const updatePlayerRepository = async (playerData) => {
 
 export const updatePlayerTeamRepository = async (updateData) => {
   const player = await Player.findByIdAndUpdate(updateData.player_id, { status: updateData.status, team_id: updateData.team_id }, { new: true });
+  
   return player;
 };

@@ -25,9 +25,16 @@ export const useAuthStore = defineStore('auth', {
         },
         async logout() {
             await authService.logout();
-                this.user = null;
-                this.success = false;
-                router.replace('/login');
+            this.user = null;
+            this.success = false;
+            
+            // Clear any stored tokens from browser storage
+            localStorage.removeItem('token');
+            localStorage.removeItem('access_token');
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('access_token');
+            
+            router.replace('/login');
         },
         async login(payload) {
             

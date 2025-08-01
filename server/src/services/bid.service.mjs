@@ -3,6 +3,7 @@ import { getIO } from "../utils/socket.js";
 import { getBidRepository, getPlayerBidRepository, saveBidRepository } from "../repositories/bid.repository.mjs";
 import { errorResponse, successResponse } from "../utils/apiResponse.mjs";
 import Team from "../models/team.model.mjs";
+import Player from "../models/player.model.mjs"
 
 export const getBidService = async () => {
 
@@ -37,7 +38,7 @@ export const saveBidService = async (bid) => {
     auction_id: bid.auctionId
   };
 
-  const currentMax = await checkBidValue(bidData.player_id);
+  const currentMax = await checkBidValue(bidData.player_id,bidData.auction_id);
 
   if (bidData.bid_value <= currentMax) {
     return errorResponse(`Bid value must be greater than ${currentMax}`);
@@ -50,23 +51,23 @@ export const saveBidService = async (bid) => {
   return successResponse("Bid saved successfully", { bidArray });
 }
 
-export const checkBidValue = async (playerId) => {
+export const checkBidValue = async (playerId,auctionId) => {
 
-  const maxBid = await Bid.find({ player_id: playerId })
+  const maxBid = await Bid.find({ player_id: playerId, auction_id: auctionId})
     .sort({ bid_value: -1 })
     .limit(1);
 
     return maxBid[0]?.bid_value || 0;
 };
 
-export const checkHeighestBid = async (playerId, auctionId) => {
+export const checkHeightBid = async (playerId, auctionId) => {
 
   const maxBid = await Bid.find({ player_id: playerId, auction_id: auctionId })
     .sort({ bid_value: -1 })
     .limit(1);
     
     if(maxBid.length > 0){
-      return { status : true, team_id: maxBid[0].team_id, player_id: maxBid[0].player_id };
+      return { status : true, team_id: maxBid[0].team_id, player_id: maxBid[0].player_id, maxBid:maxBid[0].bid_value };
     }else{
       return { status : false , player_id: playerId };
     }

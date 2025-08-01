@@ -30,6 +30,7 @@ onMounted(() => {
     console.log(highestBids.value.team.logo);
   });
 });
+
 onMounted(async () => {
 
   try {
@@ -55,15 +56,22 @@ onMounted(async () => {
         timeLeftInSeconds.value--;
       } else {
         clearInterval(countdownInterval);
-        try {
-          await updatePlayerTeam({
-            playerId: player.value._id,
-            auctionId: auctionId.value,
-          });
-          console.log("Player team updated successfully.");
-        } catch (err) {
-          console.error("Failed to update player team:", err);
+
+        // Only allow admin users to update player team
+        if (userRole.value === 'Admin') {
+          try {
+            await updatePlayerTeam({
+              playerId: player.value._id,
+              auctionId: auctionId.value,
+            });
+            console.log("Player team updated successfully.");
+          } catch (err) {
+            console.error("Failed to update player team:", err);
+          }
+        } else {
+          console.log("Non-admin user - player team update skipped.");
         }
+
         router.push(`/live/${auctionId.value}`);
       }
     }, 1000);

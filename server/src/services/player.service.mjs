@@ -1,8 +1,8 @@
 import { getPlayerByIdRepository, getPlayerRepository, savePlayerRepository, updatePlayerRepository, updatePlayerTeamRepository } from "../repositories/player.repository.mjs";
 import { successResponse, errorResponse } from "../utils/apiResponse.mjs";
-import Player from "../models/player.model.mjs";
-import { checkBidValue, checkHeighestBid } from "./bid.service.mjs";
+import {  checkHeightBid } from "./bid.service.mjs";
 import { updateAuctionStateService } from "./auction.service.mjs";
+import Team from "../models/team.model.mjs"
 
 export const getPlayersService = async () => {
   const players = await getPlayerRepository();
@@ -27,23 +27,32 @@ return successResponse("Player updated successfully", player);
 };
 
 export const updatePlayerTeamService = async (playerData) => {
-  const is_sell = await checkHeighestBid(playerData.playerId, playerData.auctionId);
+  const is_sell = await checkHeightBid(playerData.playerId, playerData.auctionId);
   let updateData;
 
     if(!is_sell.status){
        updateData = {
         player_id: playerData.playerId,
         team_id: is_sell.team_id?? null,
-        status: 4
+        status: 4,
+        auction_id: playerData.auctionId
       };
     }else{
        updateData = {
         player_id: playerData.playerId,
         team_id: is_sell.team_id,
-        status: 3
+        status: 3,
+        auction_id:playerData.auctionId,
+        max_bid: is_sell.maxBid
       };
+
+      // const team = await Team.findById(updateData.team_id);
+      // let old_bid_cost = team.total_bids;
+      // team.total_bids = old_bid_cost + updateData.max_bid;
+      // await team.save();
     }
     const player = await updatePlayerTeamRepository(updateData);
+
       await updateAuctionStateService(playerData.auctionId);
   return successResponse("Player updated successfully", player);
 
