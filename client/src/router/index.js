@@ -1,25 +1,20 @@
 import { useAuthStore } from '../store/auth';
 import { createRouter, createWebHistory } from 'vue-router';
 import authRoutes from './authRoutes';
-// import userRoutes from './userRoutes';
 import teamRoutes from './teamRoutes';
-import dashboardRoutes from './dashboardRoutes'
-import playerRoutes from './playerRoutes'
+import dashboardRoutes from './dashboardRoutes';
+import playerRoutes from './playerRoutes';
 import auctionRoute from './auctionRoute';
 import settingRoute from './settingRoute';
 
-// Combine all route arrays into one
 const routes = [
   ...authRoutes,
   ...dashboardRoutes,
-  // ...userRoutes,
   ...teamRoutes,
   ...playerRoutes,
   ...auctionRoute,
   ...settingRoute
 ];
-
-
 
 const router = createRouter({
   history: createWebHistory(),
@@ -27,20 +22,29 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore();
+
   const publicPages = ['/login', '/register'];
   const isPublic = publicPages.includes(to.path);
 
-  const authStore = useAuthStore();
-
-  if (!authStore.user && !isPublic) {
+  // Try to restore auth state if user is null
+  if (!authStore.user) {
     await authStore.checkAuth();
   }
 
-  if (authStore.user && isPublic) {
+  const isLoggedIn = !!authStore.user;
+
+  // If route is public and user is logged in → redirect to dashboard
+  if (isPublic && isLoggedIn) {
     return next('/dashboard');
   }
 
-  next();
+  // If route requires auth and user is not logged in → redirect to login
+  if (!isPublic && !isLoggedIn) {
+    return next('/login');
+  }
+
+  return next();
 });
 
 export default router;

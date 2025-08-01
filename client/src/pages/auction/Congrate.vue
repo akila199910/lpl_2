@@ -17,12 +17,14 @@
       <p class="text-2xl sm:text-3xl font-bold mb-2 uppercase">{{ displayData.team_id?.name }}</p>
       <p class="text-2xl sm:text-3xl font-bold mb-2 uppercase" v-if="!isSell">No Team</p>
 
+      <button class=" bg-gray-800 py-2 px-3.5 text-white text-xl" @click="router.push('/dashboard')">Back</button>
+
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { getPlayerBidDetails } from '../../services/autionService';
 import defualtUser from '../../assets/defualtUser.jpeg';
@@ -30,6 +32,7 @@ import winning from '../../assets/winning.gif';
 import lost from '../../assets/unsold.gif';
 
 const route = useRoute()
+const router = useRouter();
 const displayData = ref({});
 const isSell = ref(false);
 

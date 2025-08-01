@@ -27,7 +27,7 @@ export const useAuthStore = defineStore('auth', {
             await authService.logout();
                 this.user = null;
                 this.success = false;
-                router.push('/login');
+                router.replace('/login');
         },
         async login(payload) {
             
@@ -50,7 +50,6 @@ export const useAuthStore = defineStore('auth', {
                     this.message = res.message;
                     this.user = res.data;
                     this.errors = null;
-
                     // Redirect after login
                     router.push('/dashboard');
                     // if (res.data.role === 'Admin') router.push('/admin');

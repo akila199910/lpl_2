@@ -3,11 +3,14 @@ import Navbar from '../components/layout/Navbar.vue'
 import Sidebar from '../components/layout/Sidebar.vue'
 import { onMounted, ref } from 'vue'
 import socket from '../socket.js';
+import { useRouter } from 'vue-router';
 
 
 const sidebarOpen = ref(false);
 const showNotification = ref(false);
 const auctionPlayer = ref(null);
+const router = useRouter();
+
 
 onMounted(() => {
   socket.on('new-auction', (data) => {
@@ -19,6 +22,10 @@ onMounted(() => {
     // }, 5000);
   });
 });
+
+const handleClick = ()=>{
+  router.push('/live')
+}
 </script>
 
 <!-- AppLayout.vue -->
@@ -39,7 +46,7 @@ onMounted(() => {
         >
         <!-- 🔔 Notification Box -->
         <div
-          v-if="showNotification"
+          v-if="showNotification" @click="handleClick"
           class="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-100 text-purple-800 px-6 py-4 rounded-lg shadow-xl z-50 text-center text-lg"
         >
            {{ auctionPlayer }} has been added to the auction!

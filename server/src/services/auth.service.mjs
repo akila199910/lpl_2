@@ -22,7 +22,23 @@ export const loginUserService = async (req,res) => {
       maxAge: 24 * 60 * 60 * 1000, 
     });
 
-  return successResponse('User logged in successfully',{ user, token });
+  // Create user object without password
+  const userWithoutPassword = {
+    _id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    name: user.name,
+    contactNumber: user.contactNumber,
+    status: user.status,
+    email: user.email,
+    country: user.country,
+    role: user.role,
+    isAccountVerified: user.isAccountVerified,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt
+  };
+
+  return successResponse('User logged in successfully',{ user: userWithoutPassword, token });
 };
 
 export const registerUserService = async (payload) => {
@@ -48,13 +64,30 @@ export const registerUserService = async (payload) => {
 
   const { savedUser } = await saveAuthRepository(registeredUser);
 
-  await transport.sendMail({
-    from: process.env.MAIL_FROM_ADDRESS,
-    to: savedUser.email,
-    subject: "Welcome to LPL",
-    text: `Hello ${savedUser.name}, welcome to Lanka Premier League!`,
-  });
-  return successResponse('User registered successfully', savedUser);
+  // await transport.sendMail({
+  //   from: process.env.MAIL_FROM_ADDRESS,
+  //   to: savedUser.email,
+  //   subject: "Welcome to LPL",
+  //   text: `Hello ${savedUser.name}, welcome to Lanka Premier League!`,
+  // });
+
+  // Create user object without password
+  const userWithoutPassword = {
+    _id: savedUser._id,
+    firstName: savedUser.firstName,
+    lastName: savedUser.lastName,
+    name: savedUser.name,
+    contactNumber: savedUser.contactNumber,
+    status: savedUser.status,
+    email: savedUser.email,
+    country: savedUser.country,
+    role: savedUser.role,
+    isAccountVerified: savedUser.isAccountVerified,
+    createdAt: savedUser.createdAt,
+    updatedAt: savedUser.updatedAt
+  };
+
+  return successResponse('User registered successfully', userWithoutPassword);
 };
 
 export const logOutUserService = async (req,res) => {

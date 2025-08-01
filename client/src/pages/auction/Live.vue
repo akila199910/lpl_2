@@ -7,6 +7,7 @@ import { onUnmounted } from 'vue';
 import socket from '../../socket.js';
 import { updatePlayerTeam } from '../../services/playerService.js';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../../store/auth.js';
 
 
 const router = useRouter();
@@ -18,6 +19,10 @@ const timeLeftInSeconds = ref(0);
 let countdownInterval = null;
 const auctionId = ref('');
 const highestBids = ref([]);
+const authStore = useAuthStore();
+const userRole = computed(() => authStore.user?.role);
+
+
 
 onMounted(() => {
   socket.on("highestBidsUpdate", (payload) => {
@@ -168,7 +173,7 @@ const handleBid = async () => {
 
     </div>
 
-    <div class=" flex flex-col absolute bottom-0 left-0 z-10 m-4">
+    <div class=" flex flex-col absolute bottom-0 left-0 z-10 m-4" v-if="userRole === 'TeamOwner'">
       <div class="flex flex-row">
         <input type="text" class="border border-gray-300 rounded-md p-2 w-full" placeholder="Place your bid"
           v-model="bids">
