@@ -177,7 +177,7 @@ const confirmUpdate = async () => {
 
               <span
                 :class="[
-                  'px-3 py-1 rounded-full text-white text-xs font-semibold',
+                  'px-3 py-1 rounded-full text-white text-xs font-semibold status-label',
                   statusColor(userData.status)
                 ]"
               >
@@ -230,7 +230,7 @@ const confirmUpdate = async () => {
             <button class="bg-green-300 rounded-sm py-2 max-w-40 sm:px-6" v-if="userData.status == 0" @click="handleApproveButton">
               Approved
             </button>
-            <button class="bg-green-500 rounded-sm py-2 max-w-40 sm:px-6" v-if="userData.status == 1" @click="handleUpdateButton">
+            <button class="bg-green-500 rounded-sm py-2 max-w-40 sm:px-6" v-if="userData.status != 1" @click="handleUpdateButton">
               Update
             </button>
         </div>
@@ -251,3 +251,12 @@ const confirmUpdate = async () => {
   </DashboardLayout>
 </template>
 
+<style scoped>
+
+.status-label {
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+
+</style>

@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import DashboardLayout from '../../../layouts/DashboardLayout.vue'
 import { getTeamById, updateTeam } from '../../../services/teamService.mjs'
+import ConfirmModal from '../../../components/ui/ConfirmModal.vue';
+import SuccessPopup from '../../../components/ui/SuccessPopup.vue';
 
 const route = useRoute()
 const router = useRouter()
@@ -22,9 +24,12 @@ const form = ref({
 })
 
 const errors = ref({})
-const successMessage = ref('')
-const loading = ref(false)
 const teamId = route.params.id
+const showConfirmModal = ref(false);
+const successPopup = ref(false);
+const msg = ref('');
+const message = ref('');
+
 
 onMounted(async () => {
   try {
@@ -50,26 +55,33 @@ onMounted(async () => {
   }
 })
 
-const handleUpdate = async () => {
-  errors.value = {}
-  successMessage.value = ''
-  loading.value = true
+const handleUpdateButton = () => {
+  errors.value = {};
+  msg.value = 'Do you want to update this Team?';
+  showConfirmModal.value = true;
+}
 
+const confirmUpdate = async () => {
+  showConfirmModal.value = false;
+  await handleUpdate();
+};
+const handleUpdate = async () => {
   try {
     const payload = { ...form.value }
     const response = await updateTeam(payload)
-    if(response.data.success === false) {
-      errors.value = response.data.errors
-    }else{
-      router.push('/teams')
+    if (response.data.success) {
+      message.value = response.data.message;
+      successPopup.value = true;
+    } else {
+      errors.value = response.data.errors || {};
     }
-    successMessage.value = 'Team successfully updated!'
-  } catch (err) {
+
+    }catch (err) {
     if (err.response?.data?.errors) {
       errors.value = err.response.data.errors
     }
   } finally {
-    loading.value = false
+   
   }
 }
 </script>
@@ -79,7 +91,6 @@ const handleUpdate = async () => {
       <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Update Team</h1>
 
       <form
-        @submit.prevent="handleUpdate"
         class="bg-white rounded-lg shadow p-6 max-w-3xl mx-auto grid gap-4 grid-cols-1 sm:grid-cols-2"
       >
         <!-- Same input fields (v-models already connected) -->
@@ -141,16 +152,27 @@ const handleUpdate = async () => {
           </RouterLink>
 
           <button
-            type="submit"
+            type="button"
             class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-            :disabled="loading"
+            :disabled="loading"  @click="handleUpdateButton"
           >
-            {{ loading ? 'Updating...' : 'Update Team' }}
+          Update
           </button>
-          <p v-if="successMessage" class="text-green-500 text-sm mt-2">{{ successMessage }}</p>
         </div>
       </form>
     </div>
+    <ConfirmModal
+          :visible="showConfirmModal"
+          :msg="msg"
+          @confirm="confirmUpdate"
+          @cancel="showConfirmModal = false"
+        />
+
+    <SuccessPopup 
+        :visible="successPopup"
+        :msg="message"
+        route = '/teams'
+        />
   </DashboardLayout>
 </template>
 

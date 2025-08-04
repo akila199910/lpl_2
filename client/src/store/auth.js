@@ -37,7 +37,6 @@ export const useAuthStore = defineStore('auth', {
             router.replace('/login');
         },
         async login(payload) {
-            
             this.success = false;
             this.message = null;
             this.user = null;
@@ -48,21 +47,18 @@ export const useAuthStore = defineStore('auth', {
                 const res = response.data;
 
                 if (!res.success) {
+
                     this.success = false;
                     this.message = res.message;
-                    this.user = null;
                     this.errors = res.errorData;
-                } else {
+                }
+                else{
                     this.success = true;
                     this.message = res.message;
-                    this.user = res.data;
                     this.errors = null;
-                    // Redirect after login
-                    router.push('/dashboard');
-                    // if (res.data.role === 'Admin') router.push('/admin');
-                    // else if (res.data.role === 'Bat') router.push('/bat');
-                    // else router.push('/dashboard');
+                    router.push('/dashboard')
                 }
+                return res;
             } 
             catch (error) {
                 //  API error or network failure
@@ -77,6 +73,7 @@ export const useAuthStore = defineStore('auth', {
                     this.message = 'Something went wrong.';
                     this.errors = { general: res?.message || 'Network error' };
                 }
+                return res;
             }
         },
 

@@ -29,9 +29,9 @@ const selectedPlayer = ref({});
 const showModal = ref(false);
 const router = useRouter();
 const auctionData = ref({
-        player_id : '',
-        auctionStatus : 0  
-    })
+  player_id: '',
+  auctionStatus: 0
+})
 
 
 const statusLabel = (status) => {
@@ -108,21 +108,21 @@ const handlePush = async (id) => {
 
   try {
 
-     auctionData.value = {
+    auctionData.value = {
       player_id: id,
-      auctionStatus: 0, 
+      auctionStatus: 0,
     };
 
     const response = await pushPlayer(auctionData.value)
 
-    if(response.data.success){
+    if (response.data.success) {
       router.push("/live");
     }
 
   } catch (error) {
 
     console.log(error)
-    
+
   }
 };
 </script>
@@ -148,7 +148,7 @@ const handlePush = async (id) => {
 
           <template #item-status="{ status }">
             <span :class="[
-              'px-2 py-1 rounded-full text-white text-xs font-semibold',
+              'px-2 py-1 rounded-full text-white text-xs font-semibold status-label',
               statusColor(status)
             ]">
               {{ statusLabel(status) }}
@@ -164,18 +164,21 @@ const handlePush = async (id) => {
               <div
                 class="absolute z-50 top-6 left-0 w-40 bg-white rounded-md shadow-lg border border-gray-200 text-sm 
                       opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-150 ease-in-out">
-                
-                <button @click="handleView(id)" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2">
+
+                <button @click="handleView(id)"
+                  class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2">
                   <img :src="eyeIcon" alt="View" class="w-5 h-5" />
                   View
                 </button>
 
-                <button @click="handleEdita(id)" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2">
+                <button @click="handleEdita(id)"
+                  class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2">
                   <img :src="pencilIcon" alt="Edit" class="w-5 h-5" />
                   Edit
                 </button>
 
-                <button @click="handleDelete(id)" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2">
+                <button @click="handleDelete(id)"
+                  class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2">
                   <img :src="deleteIcon" alt="Delete" class="w-5 h-5" />
                   Delete
                 </button>
@@ -221,7 +224,7 @@ const handlePush = async (id) => {
           <!-- INFO LIST -->
           <div class="flex flex-col justify-center  space-y-4 ">
             <div class="flex justify-between items-center border-b px-4 py-3">
-            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate">Profile Information</h2>
+              <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate">Profile Information</h2>
             </div>
             <!-- Name -->
             <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
@@ -266,169 +269,183 @@ const handlePush = async (id) => {
 
         </div>
 
-          <div v-if="selectedPlayer.user_id.role !== 'Bowler'" class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 sm:max-w-3xl ">
-            <div class="flex justify-between items-center border-b px-4 py-3 max-w-xl">
-              <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2" title="Player Batting Information">
-                Player
-                Batting Information</h2>
-            </div>
-
-            <!-- INFO LIST OF STAT -->
-            <div class="flex flex-col justify-center w-full space-y-4 ">
-
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Style:</label>
-                <span class="truncate text-gray-900"
-                  :title="selectedPlayer.batting_style == 1 ? 'Right Hand' : 'Left Hand'">
-                  {{ selectedPlayer.batting_style == 1 ? 'Right Hand' : 'Left Hand' }}
-                </span>
-              </div>
-
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Average:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.batting_average">
-                  {{ selectedPlayer.batting_average }}
-                </span>
-              </div>
-
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Strike Rate:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.batting_strike_rate">
-                  {{ selectedPlayer.batting_strike_rate }}
-                </span>
-              </div>
-
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Runs:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.batting_runs">
-                  {{ selectedPlayer.batting_runs }}
-                </span>
-              </div>
-
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Hundreds:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.number_of_hundreds">
-                  {{ selectedPlayer.number_of_hundreds }}
-                </span>
-              </div>
-
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Fifties:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.number_of_fifties">
-                  {{ selectedPlayer.number_of_fifties }}
-                </span>
-              </div>
-
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">High Score:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.batting_high_score">
-                  {{ selectedPlayer.batting_high_score }}
-                </span>
-              </div>
-            </div>
+        <div v-if="selectedPlayer.user_id.role !== 'Bowler'"
+          class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 sm:max-w-3xl ">
+          <div class="flex justify-between items-center border-b px-4 py-3 max-w-xl">
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2"
+              title="Player Batting Information">
+              Player
+              Batting Information</h2>
           </div>
 
-          <div v-if="selectedPlayer.user_id.role !== 'Batsman' && selectedPlayer.user_id.role !== 'WicketKeeper'" class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 ">
-            <div class="flex justify-between items-center border-b px-4 py-3">
-              <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2" title="Player Bowling Information">
-                Player
-                Bowling Information</h2>
+          <!-- INFO LIST OF STAT -->
+          <div class="flex flex-col justify-center w-full space-y-4 ">
+
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Style:</label>
+              <span class="truncate text-gray-900"
+                :title="selectedPlayer.batting_style == 1 ? 'Right Hand' : 'Left Hand'">
+                {{ selectedPlayer.batting_style == 1 ? 'Right Hand' : 'Left Hand' }}
+              </span>
             </div>
 
-            <!-- INFO LIST OF STAT -->
-            <div class="flex flex-col justify-center w-full space-y-4 ">
-
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Style:</label>
-                <span class="truncate text-gray-900"
-                  :title="selectedPlayer.bowling_style == 1 ? 'Right Hand' : 'Left Hand'">
-                  {{ selectedPlayer.bowling_style == 1 ? 'Right Hand' : 'Left Hand' }}
-                </span>
-              </div>
-
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Average:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.bowling_average">
-                  {{ selectedPlayer.bowling_average }}
-                </span>
-              </div>
-
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Strike Rate:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.bowling_strike_rate">
-                  {{ selectedPlayer.bowling_strike_rate }}
-                </span>
-              </div>
-
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Economy:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.bowling_economy">
-                  {{ selectedPlayer.bowling_economy }}
-                </span>
-              </div>
-
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Wickets:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.bowling_wickets">
-                  {{ selectedPlayer.bowling_wickets }}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div v-if="selectedPlayer.user_id.role == 'WicketKeeper'" class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 ">
-            <div class="flex justify-between items-center border-b px-4 py-3">
-              <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2" title="Player Wicket Keeper Information">
-                Player
-                Wicket Keeper Information</h2>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Average:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.batting_average">
+                {{ selectedPlayer.batting_average }}
+              </span>
             </div>
 
-            <!-- INFO LIST OF STAT -->
-            <div class="flex flex-col justify-center w-full space-y-4 ">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Strike Rate:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.batting_strike_rate">
+                {{ selectedPlayer.batting_strike_rate }}
+              </span>
+            </div>
 
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Catches:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.number_of_catches">
-                  {{ selectedPlayer.number_of_catches }}
-                </span>
-              </div>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Runs:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.batting_runs">
+                {{ selectedPlayer.batting_runs }}
+              </span>
+            </div>
 
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Stumpings:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.number_of_stumpings">
-                  {{ selectedPlayer.number_of_stumpings }}
-                </span>
-              </div>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Hundreds:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.number_of_hundreds">
+                {{ selectedPlayer.number_of_hundreds }}
+              </span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Fifties:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.number_of_fifties">
+                {{ selectedPlayer.number_of_fifties }}
+              </span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">High Score:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.batting_high_score">
+                {{ selectedPlayer.batting_high_score }}
+              </span>
             </div>
           </div>
+        </div>
 
-          <div class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 " >
-            <div class="flex justify-between items-center border-b px-4 py-3">
-              <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2" title="Player Other Information">
-                Player
-                Other Information</h2>
+        <div v-if="selectedPlayer.user_id.role !== 'Batsman' && selectedPlayer.user_id.role !== 'WicketKeeper'"
+          class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 ">
+          <div class="flex justify-between items-center border-b px-4 py-3">
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2"
+              title="Player Bowling Information">
+              Player
+              Bowling Information</h2>
+          </div>
+
+          <!-- INFO LIST OF STAT -->
+          <div class="flex flex-col justify-center w-full space-y-4 ">
+
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Style:</label>
+              <span class="truncate text-gray-900"
+                :title="selectedPlayer.bowling_style == 1 ? 'Right Hand' : 'Left Hand'">
+                {{ selectedPlayer.bowling_style == 1 ? 'Right Hand' : 'Left Hand' }}
+              </span>
             </div>
 
-            <!-- INFO LIST OF STAT -->
-            <div class="flex flex-col justify-center w-full space-y-4 ">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Average:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.bowling_average">
+                {{ selectedPlayer.bowling_average }}
+              </span>
+            </div>
 
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Matches:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.number_of_matches">
-                  {{ selectedPlayer.number_of_matches }}
-                </span>
-              </div>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Strike Rate:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.bowling_strike_rate">
+                {{ selectedPlayer.bowling_strike_rate }}
+              </span>
+            </div>
 
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <label class="font-medium text-gray-700 w-24">Innings:</label>
-                <span class="truncate text-gray-900" :title="selectedPlayer.number_of_innings">
-                  {{ selectedPlayer.number_of_innings }}
-                </span>
-              </div>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Economy:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.bowling_economy">
+                {{ selectedPlayer.bowling_economy }}
+              </span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Wickets:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.bowling_wickets">
+                {{ selectedPlayer.bowling_wickets }}
+              </span>
             </div>
           </div>
+        </div>
+
+        <div v-if="selectedPlayer.user_id.role == 'WicketKeeper'"
+          class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 ">
+          <div class="flex justify-between items-center border-b px-4 py-3">
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2"
+              title="Player Wicket Keeper Information">
+              Player
+              Wicket Keeper Information</h2>
+          </div>
+
+          <!-- INFO LIST OF STAT -->
+          <div class="flex flex-col justify-center w-full space-y-4 ">
+
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Catches:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.number_of_catches">
+                {{ selectedPlayer.number_of_catches }}
+              </span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Stumpings:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.number_of_stumpings">
+                {{ selectedPlayer.number_of_stumpings }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col justify-center sm:justify-evenly gap-6 px-6  sm:px-8 py-6 ">
+          <div class="flex justify-between items-center border-b px-4 py-3">
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate mb-2" title="Player Other Information">
+              Player
+              Other Information</h2>
+          </div>
+
+          <!-- INFO LIST OF STAT -->
+          <div class="flex flex-col justify-center w-full space-y-4 ">
+
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Matches:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.number_of_matches">
+                {{ selectedPlayer.number_of_matches }}
+              </span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <label class="font-medium text-gray-700 w-24">Innings:</label>
+              <span class="truncate text-gray-900" :title="selectedPlayer.number_of_innings">
+                {{ selectedPlayer.number_of_innings }}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
   </DashboardLayout>
 </template>
+
+<style scoped>
+.status-label {
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+</style>

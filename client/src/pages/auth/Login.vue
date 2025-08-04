@@ -28,7 +28,7 @@
         class="flex-1 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden p-4">
         <div class="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-indigo-600/10"></div>
         <img src="/src/assets/login.jpg" alt="Login"
-          class="relative z-10 w-full h-full object-cover object-center shadow-2xl rounded-lg transform hover:scale-105 transition-transform duration-300 ease-in-out max-w-4xl max-h-[90vh] mx-4" />
+          class="relative z-10 w-2/3 h-1/2   shadow-2xl rounded-lg transform hover:scale-105 transition-transform duration-300 ease-in-out max-w-4xl max-h-[90vh] mx-4" />
       </div>
 
       <!-- Right Side - Login Form -->
@@ -42,15 +42,15 @@
           <form @submit.prevent="handleLogin" class="space-y-6">
             <div>
               <BaseInput v-model="email" type="email" placeholder="premierleague@gmail.com" />
-              <p v-if="authStore.errors?.email" class="text-sm text-red-500 mt-1">
-                {{ authStore.errors.email }}
+              <p v-if="errors?.email" class="text-sm text-red-500 mt-1">
+                {{ errors.email }}
               </p>
             </div>
 
             <div>
               <BaseInput v-model="password" type="password" placeholder="Password" />
-              <p v-if="authStore.errors?.password" class="text-sm text-red-500 mt-1">
-                {{ authStore.errors.password }}
+              <p v-if="errors?.password" class="text-sm text-red-500 mt-1">
+                {{ errors.password }}
               </p>
             </div>
 
@@ -82,7 +82,18 @@ const email = ref('');
 const password = ref('');
 const authStore = useAuthStore();
 const router = useRouter();
-function handleLogin() {
-  authStore.login({ email: email.value, password: password.value });
-}
+const errors = ref({});
+
+const handleLogin = async () => {
+  errors.value = {};
+  const res = await authStore.login({ email: email.value, password: password.value });
+  console.log(res)
+  if (!res.success) {
+    errors.value = res.errors;
+    
+  } else {
+    router.push
+  }
+};
+
 </script>
