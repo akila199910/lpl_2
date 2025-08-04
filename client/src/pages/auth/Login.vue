@@ -24,8 +24,11 @@
     <!-- Desktop Layout (md and larger) -->
     <div class="hidden md:flex min-h-screen">
       <!-- Left Side - Image -->
-      <div class="flex-1 flex items-center justify-center bg-gray-100">
-        <img src="/src/assets/aksh-yadav-bY4cqxp7vos-unsplash.jpg" alt="Login" class="max-h-full max-w-full object-contain p-5" />
+      <div
+        class="flex-1 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden p-4">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-indigo-600/10"></div>
+        <img src="/src/assets/login.jpg" alt="Login"
+          class="relative z-10 w-full h-full object-cover object-center shadow-2xl rounded-lg transform hover:scale-105 transition-transform duration-300 ease-in-out max-w-4xl max-h-[90vh] mx-4" />
       </div>
 
       <!-- Right Side - Login Form -->
