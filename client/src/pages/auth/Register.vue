@@ -4,6 +4,8 @@ import BaseInput from '../../components/ui/BaseInput.vue';
 import BaseButton from '../../components/ui/BaseButton.vue';
 import { reactive, ref } from 'vue';
 import { useAuthStore } from '../../store/auth';
+import { useRouter } from 'vue-router';
+
 
 const authStore = useAuthStore();
 
@@ -21,6 +23,8 @@ const form = reactive({
 });
 
 const errors = ref({});
+const router = useRouter();
+
 
 
 const handleSubmit = async () => {
@@ -96,8 +100,9 @@ const handleSubmit = async () => {
             </select>
         </div>
 
-        <BaseButton class=" text-wrap break-all overflow-hidden">Register</BaseButton>
+        <BaseButton class=" text-wrap break-all overflow-hidden">Login</BaseButton>
 
+        <P class="font-medium">Already have an account? <span class="font-bold cursor-pointer" @click="router.push('/login')">Register</span></P>
     </form>
     </AuthLayout>
 </template>
