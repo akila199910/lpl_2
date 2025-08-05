@@ -51,6 +51,11 @@ export const playerUpdateValidation = [
     .notEmpty()
     .withMessage('Bowling strike rate is required'),
 
+  body('number_of_stumpings')
+    .if((value, { req }) => ['Wicketkeeper'].includes(req.body.role))
+    .notEmpty()
+    .withMessage('Number of stump is required'),
+
   body('bowling_wickets')
     .if((value, { req }) => ['Bowler', 'AllRounder'].includes(req.body.role))
     .notEmpty()
@@ -74,8 +79,7 @@ export const playerUpdateValidation = [
   body('number_of_matches').notEmpty().withMessage('Number of matches is required'),
   body('number_of_innings').notEmpty().withMessage('Number of innings is required'),
   body('number_of_catches').notEmpty().withMessage('Number of catches is required'),
-  body('number_of_stumpings').notEmpty().withMessage('Number of stumpings is required'),
-
+  body('base_price').notEmpty().withMessage('Base price is required'),
   body('status')
     .notEmpty()
     .withMessage('Status is required')

@@ -6,6 +6,7 @@ import dashboardRoutes from './dashboardRoutes';
 import playerRoutes from './playerRoutes';
 import auctionRoute from './auctionRoute';
 import settingRoute from './settingRoute';
+import overviewRoute from './overviewRoute';
 
 const routes = [
   ...authRoutes,
@@ -13,7 +14,8 @@ const routes = [
   ...teamRoutes,
   ...playerRoutes,
   ...auctionRoute,
-  ...settingRoute
+  ...settingRoute,
+  ...overviewRoute
 ];
 
 const router = createRouter({
