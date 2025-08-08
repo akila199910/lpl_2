@@ -27,7 +27,7 @@ const userRole = computed(() => authStore.user?.role);
 onMounted(() => {
   socket.on("highestBidsUpdate", (payload) => {
     highestBids.value = payload.bidArray;
-    console.log(highestBids.value.team.logo);
+    console.log(highestBids)
   });
 });
 
@@ -170,12 +170,15 @@ const handleBid = async () => {
       <div class="col-span-5">
         <div class=" text-center flex flex-row p-2 justify-between px-4">
           <div class="font-bold">Team</div>
+          <div class="font-bold">Name</div>
           <div class="font-bold">Bid Amount</div>
         </div>
-        <div class="flex flex-row p-2 justify-between items-center px-4" v-for="highestBids in highestBids">
-          <img :src="highestBids.team.logo == 'user.png' ? logo : highestBids.team.logo" class="w-12 h-12 rounded-full"
+        <div class="flex flex-row p-2 justify-between items-center px-4" v-for="highestBid in highestBids">
+          <img :src="highestBid.team.logo == 'user.png' ? logo : highestBid.team.logo" class="w-12 h-12 rounded-full"
             alt="">
-          <div class="font-semibold">{{ highestBids.bid_value }}</div>
+          <div class="font-semibold">{{ highestBid.team.name }}</div>
+          {{ console.log(highestBid.team.logo) }}
+          <div class="font-semibold">{{ highestBid.bid_value }}</div>
         </div>
       </div>
 
@@ -183,7 +186,7 @@ const handleBid = async () => {
 
     <div class=" flex flex-col absolute bottom-0 left-0 z-10 m-4" v-if="userRole === 'TeamOwner'">
       <div class="flex flex-row">
-        <input type="text" class="border border-gray-300 rounded-md p-2 w-full" placeholder="Place your bid"
+        <input type="number" class="border border-gray-300 rounded-md p-2 w-full" placeholder="Place your bid"
           v-model="bids">
         <button class="bg-blue-500 text-white rounded-md p-2 ml-2" @click="handleBid">
           Submit
@@ -215,9 +218,10 @@ const handleBid = async () => {
     <!-- Mobile fixed bottom input -->
     <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t sm:hidden z-30">
       <div class="flex justify-between gap-2">
-        <input type="text" class="border border-gray-300 rounded-md p-2 w-full" placeholder="Your message">
-        <button class="bg-blue-500 text-white px-4 py-2 rounded-md">Submit</button>
+        <input type="number" class="border border-gray-300 rounded-md p-2 w-full" placeholder="Place your bid">
+        <button class="bg-blue-500 text-white px-4 py-2 rounded-md" @click="handleBid">Submit</button>
       </div>
+      <span v-if="errorMessage" class="text-red-500 mt-1">{{ errorMessage }}</span>
     </div>
   </div>
 </template>

@@ -18,6 +18,7 @@ import overviewRouter from "./src/routes/overview.route.mjs";
 import { initSocket } from "./src/utils/socket.js";
 
 import dotenv from "dotenv";
+import dashboardRouter from "./src/routes/dashboardRouter.mjs";
 
 const env = process.env.NODE_ENV || 'development';
 dotenv.config({ path: `.env.${env}` });
@@ -49,6 +50,7 @@ app.use("/bids", bidRouter);
 app.use("/settings", settingRouter);
 app.use("/auctions", auctionRouter);
 app.use('/overview', overviewRouter)
+app.use('/dashboard', dashboardRouter)
 app.use(errorHandlerMiddleware);
 
 // DB & Server Start
