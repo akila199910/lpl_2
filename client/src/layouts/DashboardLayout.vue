@@ -17,9 +17,6 @@ onMounted(() => {
     auctionPlayer.value = data?.player_id?.name || 'New Player';
     showNotification.value = true;
 
-    // setTimeout(() => {
-    //   showNotification.value = false;
-    // }, 5000);
   });
 });
 
@@ -30,7 +27,7 @@ const handleClick = ()=>{
 
 <!-- AppLayout.vue -->
 <template>
-  <div class="h-screen flex flex-col">
+  <div class="h-screen flex flex-col min-h-screen">
     <Navbar @toggle-sidebar="sidebarOpen = !sidebarOpen" />
 
     <div class="flex flex-1 overflow-auto">
@@ -40,14 +37,13 @@ const handleClick = ()=>{
       <!-- Main content -->
         <div
           :class="[
-            'flex-1 overflow-y-auto p-4 shadow',
+            'flex-1 overflow-y-auto p-4 shadow relative',
             sidebarOpen ? 'hidden sm:block' : ''
           ]"
         >
-        <!-- 🔔 Notification Box -->
         <div
           v-if="showNotification" @click="handleClick"
-          class="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-100 text-purple-800 px-6 py-4 rounded-lg shadow-xl z-50 text-center text-lg"
+          class="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-100 text-purple-800 px-6 pt-4 rounded-lg shadow-xl z-50 text-center text-lg"
         >
            {{ auctionPlayer }} has been added to the auction!
         </div>

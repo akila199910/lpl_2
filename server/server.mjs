@@ -13,6 +13,8 @@ import playerRouter from "./src/routes/player.route.mjs";
 import bidRouter from "./src/routes/bidRouter.mjs";
 import settingRouter from "./src/routes/settingsRouter.mjs";
 import auctionRouter from "./src/routes/auctionRouter.mjs";
+import overviewRouter from "./src/routes/overview.route.mjs";
+
 import { initSocket } from "./src/utils/socket.js";
 
 import dotenv from "dotenv";
@@ -46,6 +48,7 @@ app.use("/players", playerRouter);
 app.use("/bids", bidRouter);
 app.use("/settings", settingRouter);
 app.use("/auctions", auctionRouter);
+app.use('/overview', overviewRouter)
 app.use(errorHandlerMiddleware);
 
 // DB & Server Start

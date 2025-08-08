@@ -40,7 +40,7 @@ const playerSchema = new mongoose.Schema({
     number_of_catches: { type: Number, required: false , default: null},
     number_of_stumpings: { type: Number, required: false , default: null},
     status: { type: Number, required: false, enum: [0,1,2,3,4,5,6], default: 0 },
-    base_price:{ type: Number, required:false, default:1000 }
+    base_price:{ type: Number, required:false, default:10000 }
 });
 
 playerSchema.set('toObject', { virtuals: true });
