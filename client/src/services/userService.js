@@ -12,3 +12,6 @@ const api = axios.create({
 export default {
   getUserData: (data) => api.post('/users/my-profile', data),
 };
+
+export const getUserByName = (name) =>
+  api.get(`/users/${name}`);

@@ -1,3 +1,4 @@
+import { getUserByNameRepository } from "../repositories/user.repository.mjs";
 import { getMyProfileService } from "../services/user.service.mjs";
 import { successResponse } from "../utils/apiResponse.mjs";
 
@@ -9,3 +10,16 @@ export const getMyProfile = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getUserByNameController = async (req,res)=>{
+
+    try {
+        const name = req.params.name;
+        const result = await getUserByNameRepository(name);
+
+        return res.status(result.success ? 200 : 400).json(result);
+
+    } catch (error) {
+        
+    }
+}
