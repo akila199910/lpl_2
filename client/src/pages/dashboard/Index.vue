@@ -84,45 +84,46 @@ onMounted(async () => {
 <!-- pages/dashboard/Index.vue -->
 <template>
   <DashboardLayout>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-7xl mx-auto mt-6">
+    <div class="flex flex-col min-h-[calc(100vh-100px)] justify-between"> 
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-7xl mx-auto mt-6">
 
-      <div class="bg-white rounded-lg shadow-md p-4 text-center cursor-pointer">
-        <h1 class="font-semibold uppercase ">Total Pending</h1>
-        <span class="font-bold">{{ countDetails[0] }}</span>
+        <div class="bg-white rounded-lg shadow-md p-4 text-center cursor-pointer">
+          <h1 class="font-semibold uppercase ">Total Pending</h1>
+          <span class="font-bold">{{ countDetails[0] }}</span>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-4 text-center cursor-pointer">
+          <h1 class="font-semibold uppercase">Total Approved</h1>
+          <span class="font-bold">{{ countDetails[1] }}</span>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-4 text-center cursor-pointer">
+          <h1 class="font-semibold uppercase">Total Sold</h1>
+          <span class="font-bold">{{ countDetails[3] }}</span>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-4 text-center cursor-pointer">
+          <h1 class="font-semibold uppercase">Total Unsold</h1>
+          <span class="font-bold">{{ countDetails[4] }}</span>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-4 text-center cursor-pointer">
+          <h1 class="font-semibold uppercase">Total Contract</h1>
+          <span class="font-bold">{{ countDetails[5] }}</span>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-4 text-center cursor-pointer">
+          <h1 class="font-semibold uppercase">Total Contracted</h1>
+          <span class="font-bold">{{ countDetails[6] }}</span>
+        </div>
       </div>
 
-      <div class="bg-white rounded-lg shadow-md p-4 text-center cursor-pointer">
-        <h1 class="font-semibold uppercase">Total Approved</h1>
-        <span class="font-bold">{{ countDetails[1] }}</span>
+      <div class="flex justify-center w-full ">
+        <div class="sticky h-80 max-w-[320px] sm:min-w-sm mb-5">
+        <Bar :key="chartKey" :data="chartData" :options="chartOptions" />
+        </div>
       </div>
-
-      <div class="bg-white rounded-lg shadow-md p-4 text-center cursor-pointer">
-        <h1 class="font-semibold uppercase">Total Sold</h1>
-        <span class="font-bold">{{ countDetails[3] }}</span>
-      </div>
-
-      <div class="bg-white rounded-lg shadow-md p-4 text-center cursor-pointer">
-        <h1 class="font-semibold uppercase">Total Unsold</h1>
-        <span class="font-bold">{{ countDetails[4] }}</span>
-      </div>
-
-      <div class="bg-white rounded-lg shadow-md p-4 text-center cursor-pointer">
-        <h1 class="font-semibold uppercase">Total Contract</h1>
-        <span class="font-bold">{{ countDetails[5] }}</span>
-      </div>
-
-      <div class="bg-white rounded-lg shadow-md p-4 text-center cursor-pointer">
-        <h1 class="font-semibold uppercase">Total Contracted</h1>
-        <span class="font-bold">{{ countDetails[6] }}</span>
-      </div>
-    </div>
-
-    <div class="flex justify-center w-full ">
-      <div class="fixed h-80 bottom-0 max-w-[320px] sm:min-w-sm mb-5">
-      <Bar :key="chartKey" :data="chartData" :options="chartOptions" />
-      </div>
-    </div>
-    
+  </div>
   </DashboardLayout>
 </template>
 

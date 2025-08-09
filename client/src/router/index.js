@@ -7,6 +7,7 @@ import playerRoutes from './playerRoutes';
 import auctionRoute from './auctionRoute';
 import settingRoute from './settingRoute';
 import overviewRoute from './overviewRoute';
+import messageRoute from './messageRoute';
 
 const routes = [
   ...authRoutes,
@@ -15,7 +16,8 @@ const routes = [
   ...playerRoutes,
   ...auctionRoute,
   ...settingRoute,
-  ...overviewRoute
+  ...overviewRoute,
+  ...messageRoute
 ];
 
 const router = createRouter({
